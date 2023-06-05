@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ post.title }} | 我的博客 {% endblock%}
+
+{% block content %}
+<main class="container">
+  <article>
+    <h1>(post)文章标题：{{ post.title }}</h1>
+    <p>文章摘要：{{ post.content|slice:":200" }}</p>
+    <p>发布时间：{{ post.published_at|date:"Y-m-d H:i:s" }}</p>
+    <p>浏览量：{{ post.views }}</p>
+    <p>点赞数：{{ post.likes }}</p>
+    <p>点踩数：{{ post.dislikes }}</p>
+    <p>更新时间：{{ post.updated_at|date:"Y-m-d H:i:s" }}</p>
+    <p>评论数：{{ comment_count }}</p>
+  </article>
+</main>
+{% endblock content %}

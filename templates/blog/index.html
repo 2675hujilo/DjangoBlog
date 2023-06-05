@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %} 文章列表 | 我的博客 {% endblock%}
+
+{% block content %}
+<main class="container">
+  <h1>文章列表</h1>
+  {% for post in posts %}
+  <article>
+    <h1>(index)文章标题：<a href="{% url 'post_detail' pk=post.post_id %}">{{ post.title }}</a></h1>
+    <p>文章摘要：{{ post.content|slice:":200" }}</p>
+    <p>浏览量：{{ post.views }}</p>
+    <p>点赞数：{{ post.likes }}</p>
+    <p>点踩数：{{ post.dislikes }}</p>
+    <p>发布时间：{{ post.published_at|date:"Y-m-d H:i:s" }}</p>
+  </article>
+  {% endfor %}
+</main>
+{% endblock content %}

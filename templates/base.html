@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}我的博客{% endblock %}</title>
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">-->
+</head>
+<body>
+
+<header id="header">
+    <div class="container">
+        <p>我是一个头部导航栏，可以自定义内容</p>
+    </div>
+    <div class="container">
+        <a href="../login/" >登录</a>
+    </div>
+    <div class="container">
+        <a href="../register/" >注册</a>
+    </div>
+</header>
+
+<main id="main">
+    {% block content %}
+    {% endblock content %}
+</main>
+<footer id="footer">
+    <div class="container">
+        <p>这里是页面底部，您可以在这里写一些法律限制性信息或注明版权等</p>
+    </div>
+</footer>
+
+<!--<script src="{% static 'js/script.js' %}"></script>-->
+
+{% block extra_js %}
+{% endblock extra_js %}
+
+</body>
+</html>

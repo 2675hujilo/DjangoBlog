@@ -42,7 +42,7 @@ python manage.py runserver
 ```
 
 浏览器打开: http://127.0.0.1:8000/   
-```
+
 
 用户表 (user)
 - user_id       (int, primary key)                 用户id

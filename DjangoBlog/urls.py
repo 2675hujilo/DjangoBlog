@@ -16,14 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import RedirectView
-
 from Blog import views
+from Blog.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('index/', views.index),
+    path('index/', views.index, name='index'),
     path('', RedirectView.as_view(url='index/')),
-    path('login/', views.login),
-    path('register/', views.register),
-    path('post/<int:pk>/', views.post_detail, name='post_detail')
+    path('login/', views.login, name='login'),
+    path('register/', views.register, name='register'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('post/<int:pk>/', views.post_detail, name='post_detail'),
+    path('new/', views.new_post, name='new_post')
 ]

@@ -4,9 +4,10 @@ from django.db import models
 
 from django.db import models
 from django.db.models import Q
+from django.contrib.auth.models import AbstractUser
 
 
-class User(models.Model):
+class User(AbstractUser):
     user_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
     email = models.CharField(max_length=100, unique=True)
@@ -35,6 +36,9 @@ class User(models.Model):
     class Meta:
         db_table = 'user'
 
+    def __str__(self):
+        return self.username
+
     @classmethod
     def find_user_by_username_or_email(cls, username_or_email):
         try:
@@ -48,8 +52,11 @@ class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE,
-                               related_name="children")
+    parent = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.CASCADE,
+        related_name="children"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -59,8 +66,7 @@ class Category(models.Model):
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
-    user_id = models.IntegerField()
-    category_id = models.IntegerField()
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     content = models.TextField()
     image_url = models.URLField(null=True, blank=True)
@@ -68,7 +74,7 @@ class Post(models.Model):
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
-    is_public = models.BooleanField()
+    is_public = models.BooleanField(default=True)
     status_choice = [
         ('draft', 'Draft'),
         ('published', 'Published'),
@@ -78,7 +84,7 @@ class Post(models.Model):
     meta_keywords = models.TextField(null=True, blank=True)
     meta_description = models.TextField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    categories = models.ManyToManyField(Category, related_name='posts')
     class Meta:
         db_table = 'post'
 

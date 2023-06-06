@@ -4,16 +4,33 @@
 
 {% block content %}
 <main class="container">
-  <h1>文章列表</h1>
-  {% for post in posts %}
-  <article>
-    <h1>(index)文章标题：<a href="{% url 'post_detail' pk=post.post_id %}">{{ post.title }}</a></h1>
-    <p>文章摘要：{{ post.content|slice:":200" }}</p>
-    <p>浏览量：{{ post.views }}</p>
-    <p>点赞数：{{ post.likes }}</p>
-    <p>点踩数：{{ post.dislikes }}</p>
-    <p>发布时间：{{ post.published_at|date:"Y-m-d H:i:s" }}</p>
-  </article>
-  {% endfor %}
+    <h1>文章列表</h1>
+{#    {% if user.is_authenticated %}#}
+{#        <p>已登录，欢迎 {{ user.username }}</p>#}
+{#    {% else %}#}
+{#        <p>未登录，请先<a href="{% url 'login' %}">登录</a></p>#}
+{#    {% endif %}#}
+{#  <!-- 展示内容 -->#}
+    {% for post in posts %}
+        <article>
+            <h1>(index)文章标题：<a href="{% url 'post_detail' pk=post.post_id %}">{{ post.title }}</a></h1>
+            <p>文章摘要：{{ post.content|slice:":200" }}</p>
+            <p>浏览量：{{ post.views }}</p>
+            <p>点赞数：{{ post.likes }}</p>
+            <p>点踩数：{{ post.dislikes }}</p>
+            <p>发布时间：{{ post.published_at|date:"Y-m-d H:i:s" }}</p>
+        </article>
+    {% endfor %}
+
 </main>
-{% endblock content %}
+{% endblock content %}D:\AAAAAAD\DjangoBlog>python manage.py makemigrations
+It is impossible to add a non-nullable field 'category' to post without specifying a default. This is because the database needs something to populate existing rows.
+Please select a fix:
+ 1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
+ 2) Quit and manually define a default value in models.py.
+1>>> 1
+It is impossible to add a non-nullable field 'user' to post without specifying a default. This is because the database needs something to populate existing rows.
+Please select a fix:
+ 1) Provide a one-off default now (will be set on all existing rows with a null value for this column)
+ 2) Quit and manually define a default value in models.py.
+Select an option:

@@ -10,13 +10,16 @@
 
 <header id="header">
     <div class="container">
-        <p>我是一个头部导航栏，可以自定义内容</p>
+        <p>这里是头部导航栏。</p>
     </div>
     <div class="container">
-        <a href="../login/" >登录</a>
-    </div>
-    <div class="container">
-        <a href="../register/" >注册</a>
+        {% if user.is_authenticated %}
+            <p>欢迎您 {{ user.username }}!</p>
+            <a href="{% url 'logout' %}">登出</a>
+        {% else %}
+            <a href="{% url 'login' %}">登录</a>
+            <a href="{% url 'register' %}">注册</a>
+        {% endif %}
     </div>
 </header>
 
@@ -26,7 +29,7 @@
 </main>
 <footer id="footer">
     <div class="container">
-        <p>这里是页面底部，您可以在这里写一些法律限制性信息或注明版权等</p>
+        <p>这里是页面底部。</p>
     </div>
 </footer>
 

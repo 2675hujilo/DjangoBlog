@@ -2,35 +2,83 @@ from django.utils import timezone
 from django.db.models import Count
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from Blog.models import AccessLog, Post, Comment, User
+from Blog.models import AccessLog, Post, Comment, User, Category
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as login_de
+from django.contrib.auth.views import LogoutView as LogoutView_de
+from django.urls import reverse_lazy
 
 
 # Create your views here.
 
 
+# def login(request):
+#     if request.method == 'POST':
+#         username_or_email = request.POST.get('username_or_email')
+#         password = request.POST.get('password')
+#
+#         # 查询数据库，看是否有一条与输入的用户名/邮箱和密码匹配的记录
+#         user = User.find_user_by_username_or_email(username_or_email)
+#         if user is not None and user["password"] == password:
+#             # 匹配成功，将当前时间存为最后登录时间并保存到数据库，并将当前用户 ID 记录到 session 中
+#             now = timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]  # 将当前时间格式化为 yyyy-mm-dd HH:MM:ss.mmm 格式
+#             User.objects.filter(pk=user['user_id']).update(last_login_at=now)
+#             request.session['user_id'] = user['user_id']
+#             return redirect('/index/')
+#         else:
+#             # 显示错误信息
+#             error_msg = "用户名或密码错误！"
+#             return render(request, 'blog/login.html', {'error_msg': error_msg})
+#
+#     else:
+#         # GET请求展示登录页面
+#         return render(request, 'blog/login.html')
 def login(request):
     if request.method == 'POST':
         username_or_email = request.POST.get('username_or_email')
         password = request.POST.get('password')
 
-        # 查询数据库，看是否有一条与输入的用户名/邮箱和密码匹配的记录
-        user = User.find_user_by_username_or_email(username_or_email)
-        if user is not None and user["password"] == password:
-            # 匹配成功，将当前时间存为最后登录时间并保存到数据库，并将当前用户 ID 记录到 session 中
-            now = timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]  # 将当前时间格式化为 yyyy-mm-dd HH:MM:ss.mmm 格式
-            User.objects.filter(pk=user['user_id']).update(last_login_at=now)
-            request.session['user_id'] = user['user_id']
+        # 使用 Django 的认证系统进行用户验证
+        user = authenticate(username=username_or_email, password=password)
+        if user is not None:
+            # 用户名和密码验证通过，将其登录并跳转到指定链接
+            login_de(request, user)
             return redirect('/index/')
         else:
-            # 显示错误信息
+            # 登录失败，提示用户名或密码错误
             error_msg = "用户名或密码错误！"
             return render(request, 'blog/login.html', {'error_msg': error_msg})
-
     else:
         # GET请求展示登录页面
         return render(request, 'blog/login.html')
 
 
+# def register(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password1 = request.POST.get('password1')
+#         password2 = request.POST.get('password2')
+#         email = request.POST.get('email')
+#
+#         # 判断两次输入的密码是否相同
+#         if password1 != password2:
+#             error_msg = "两次输入的密码不一致！"
+#             return render(request, 'blog/register.html', {'error_msg': error_msg})
+#
+#         # 创建用户并保存到数据库中
+#         try:
+#             new_user = User(username=username, password=password1, email=email, user_id=None)
+#
+#             new_user.save()
+#             # 注册成功，跳转到登录页面
+#             return redirect('/login/')
+#         except Exception as e:
+#             # 如果创建用户失败，则显示错误信息
+#             error_msg = "注册失败：" + str(e)
+#             return render(request, 'blog/register.html', {'error_msg': error_msg})
+#     else:
+#         # 显示注册页面
+#         return render(request, 'blog/register.html')
 def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -45,10 +93,9 @@ def register(request):
 
         # 创建用户并保存到数据库中
         try:
-            new_user = User(username=username, password=password1, email=email, user_id=None)
+            User.objects.create_user(username=username, email=email, password=password1)
 
-            new_user.save()
-            # 注册成功，跳转到登录页面
+            # 用户创建成功，跳转到登录页面
             return redirect('/login/')
         except Exception as e:
             # 如果创建用户失败，则显示错误信息
@@ -57,6 +104,23 @@ def register(request):
     else:
         # 显示注册页面
         return render(request, 'blog/register.html')
+
+
+class LogoutView(LogoutView_de):
+    template_name = 'blog/index.html'
+    next_page = reverse_lazy('index')
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        视图类中的方法，在请求分派给该视图之前执行。
+        可以重写此方法进行参数验证、日志记录等处理。
+        """
+        if request.user.is_authenticated:
+            # 清空 session 数据
+            request.session.flush()
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return redirect(reverse_lazy('index'))
 
 
 @login_required
@@ -117,15 +181,44 @@ def post_detail(request, pk):
     # 更新模板上下文，部分显示内容长度为前 200 字符
     post.content = post.content[:200]
 
-    return render(request, 'blog/post_detail.html', {'post': post,
-                                                     'comment_count': comment_count})
+    return render(request, 'blog/post.html', {'post': post,
+                                              'comment_count': comment_count})
 
 
 def index(request):
-    # 获取所有文章实例
     posts = Post.objects.all()
     for post in posts:
         # 部分显示文章内容（前 200 个字符）
         post.content = post.content[:200]
+    # 用户已认证
+    if request.user.is_authenticated:
+        message = '欢迎您，' + str(request.user) + '！'
+    # 用户未认证
+    else:
+        message = '请登录以阅读文章。'
 
-    return render(request, 'blog/index.html', {'posts': posts})
+    return render(request, 'blog/index.html', {'posts': posts, 'message': message})
+
+
+@login_required(login_url='login')
+def new_post(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        content = request.POST['content']
+        category_id = request.POST.get('category_id')
+        user_pk = request.user.pk
+        # 获取分类和用户对象
+        category_obj = Category.objects.get(pk=category_id)
+        user_obj = User.objects.get(user_id=user_pk)
+        post = Post(title=title, content=content, user_id=user_obj)
+        post.save()
+        # 添加分类到文章中
+        post.categories.add(category_obj)
+
+        return redirect('post_detail', pk=post.pk)
+
+    # 如果请求方法不是POST，则返回新的HTTPResponse对象来显示创建文章表单
+    context = {'categories': Category.objects.all()}
+    return render(request, 'blog/new.html', context)
+
+

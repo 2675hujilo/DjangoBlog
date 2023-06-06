@@ -1,42 +1,84 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}我的博客{% endblock %}</title>
-    <!--<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>月亮之下 - 我熬落霞一壶，饮星月一盏，披风雪一裳，织山川一卷。</title>
+    <link rel="stylesheet" href="{% static "assets/bootstrap/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="{% static "assets/fonts/ionicons.min.css"%}">
+    <link rel="stylesheet" href="{% static "assets/css/Footer-Basic.css"%}">
+    <link rel="stylesheet" href="{% static "assets/css/baguetteBox.min.css"%}">
+    <link rel="stylesheet" href="{% static "assets/css/smoothproducts.css"%}">
 </head>
+
 <body>
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+        <div class="container"><a class="navbar-brand logo" href="#">月亮之下</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">页面菜单</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'new_post' %}">发帖</a>
+                            <a class="dropdown-item" href="{% url 'index' %}">页面2</a>
+                            <a class="dropdown-item" href="{% url 'index' %}">页面3</a>
+                            <a class="dropdown-item" href="{% url 'index' %}">页面4</a>
+                            <a class="dropdown-item" href="{% url 'index' %}">页面5</a>
+                        </div>
+                    </li>
 
-<header id="header">
-    <div class="container">
-        <p>这里是头部导航栏。</p>
-    </div>
-    <div class="container">
-        {% if user.is_authenticated %}
-            <p>欢迎您 {{ user.username }}!</p>
-            <a href="{% url 'logout' %}">登出</a>
-        {% else %}
-            <a href="{% url 'login' %}">登录</a>
-            <a href="{% url 'register' %}">注册</a>
-        {% endif %}
-    </div>
-</header>
-
-<main id="main">
-    {% block content %}
-    {% endblock content %}
-</main>
-<footer id="footer">
-    <div class="container">
-        <p>这里是页面底部。</p>
-    </div>
-</footer>
-
-<!--<script src="{% static 'js/script.js' %}"></script>-->
-
-{% block extra_js %}
-{% endblock extra_js %}
-
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">欢迎 {{ user.username }}!</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'logout' %}">登出</a>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                        <a href="{% url 'login' %}" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">登录</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'login' %}">登录</a>
+                            <a class="dropdown-item" href="{% url 'register' %}">注册</a>
+                        </div>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main id="main">
+        {% block content %}
+        {% endblock content %}
+    </main>
+    <footer class="page-footer dark">
+        <footer class="footer-basic">
+            <div class="social">
+                <a href="#"><i class="icon ion-social-instagram"></i></a>
+                <a href="#"><i class="icon ion-social-snapchat"></i></a>
+                <a href="#"><i class="icon ion-social-twitter"></i></a>
+                <a href="#"><i class="icon ion-social-facebook"></i></a>
+            </div>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="#">友情链接1</a></li>
+                <li class="list-inline-item"><a href="#">友情链接2</a></li>
+                <li class="list-inline-item"><a href="#">友情链接3</a></li>
+                <li class="list-inline-item"><a href="#">友情链接4</a></li>
+                <li class="list-inline-item"><a href="#">友情链接5</a></li>
+            </ul>
+            <p class="copyright">Copy Right © 2023</p>
+        </footer>
+        <div class="footer-copyright">
+            <p>© 2023 Copyright Text</p>
+        </div>
+    </footer>
+    <script src="{% static "assets/js/jquery.min.js" %}"></script>
+    <script src="{% static "assets/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "assets/css/baguetteBox.min.css"%}"></script>
+    <script src="{% static "assets/js/smoothproducts.min.js" %}"></script>
+    <script src="{% static "assets/js/theme.js" %}"></script>
 </body>
+
 </html>

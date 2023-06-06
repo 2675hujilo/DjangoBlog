@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+<main class="container">
+    <h1 class="main-title">文章</h1>
+{#    {% if user.is_authenticated %}#}
+{#        <p>已登录，欢迎 {{ user.username }}</p>#}
+{#    {% else %}#}
+{#        <p>未登录，请先<a href="{% url 'login' %}">登录</a></p>#}
+{#    {% endif %}#}
+{#  <!-- 展示内容 -->#}
+    {% for post in posts %}
+        <article class="post post-list-thumbs" itemscope="" itemtype="http://schema.org/BlogPosting">
+            <div class="post-thumbs lazinessImg" style="background-image: {% static 'images/pic/pic_01.png'%};" data-src=" /pic_17.jpg">
+                <a href="{% url 'post_detail' pk=post.post_id %}"></a>
+            </div>
+            <div class="post-content-wraps">
+                <div class="post-content">
+                    <a href="https://www.hujilo.com/ " class="post-title"><h3>{{ post.title }}</h3></a>
+                    <div class="float-contents">
+                        <p>{{ post.content|slice:":200" }}</p>
+                    </div>
+                    <div class="post-date">
+                        <i class="iconfont"> </i>发布于{{ post.published_at|date:"Y-m-d H:i:s" }}                                 </div>
+                    <div class="post-meta">
+                        <span class="enthusiasm"><i class="iconfont"> </i>{{ post.views }}浏览量</span>
+                        <span class="comment-number"><i class="iconfont"> </i><a href="">NOTHING</a></span>
+                        <span class="classification"><i class="iconfont"> </i><a href="">未分类</a></span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    {% endfor %}
+
+</main>
+{% endblock content %}
+
+{##}
+{#<div id="primary" class="content-area">#}
+{#    <main id="main" class="site-main" role="main">#}
+{#        <h1 class="main-title">文章</h1>#}
+{#        <article class="post post-list-thumbs" itemscope="" itemtype="http://schema.org/BlogPosting">#}
+{#            <div class="post-thumbs lazinessImg" style="background-image: url( t/pic_17.jpg&quot;);" data-src=" /pic_17.jpg">#}
+{#                <a href="https://www.hujilo.com/2023/05/%e8%bf%99%e6%98%af%e4%b8%80%e7%af%87%e6%96%87%e7%ab%a0/"></a>#}
+{#            </div>#}
+{#            <div class="post-content-wraps">#}
+{#                <div class="post-content">#}
+{#                    <a href="https://www.hujilo.com/ " class="post-title"><h3>这是一篇文章</h3></a>#}
+{#                    <div class="float-contents">#}
+{#                        <p>这是一篇文章。。。</p>#}
+{#                    </div>#}
+{#                    <div class="post-date">#}
+{#                        <i class="iconfont"></i>发布于 21 天前                                    </div>#}
+{#                    <div class="post-meta">#}
+{#                        <span class="enthusiasm"><i class="iconfont"></i>218 热度</span>#}
+{#                        <span class="comment-number"><i class="iconfont"></i><a href="https://www.huj b%a0/#respond">NOTHING</a></span>#}
+{#                        <span class="classification"><i class="iconfont"></i><a href="https://www.hujilo.com/uncategorized/">未分类</a></span>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </article>#}
+{#    </main>#}
+{#    <div id="pagination"></div>#}
+{#</div>#}

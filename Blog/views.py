@@ -1,12 +1,51 @@
-from django.utils import timezone
-from django.db.models import Count
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from Blog.models import AccessLog, Post, Comment, User, Category
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
+from django.db.models import Count
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from functools import wraps
+from Blog.models import AccessLog, Post, Comment, User, Category
+
+
+# def log_access(func):
+#     @wraps(func)
+#     def wrapper(request, *args, **kwargs):
+#         # 获取当前登录用户
+#
+#         user_obj = User.objects.get(user_id=request.user.pk)
+#         print("user_obj=",user_obj)
+#         user_pk = user_obj if request.user.is_authenticated else None
+#         # 获取当前访问的文章id，如果是浏览分类页面，则post_id为None
+#         post_id = int(kwargs.get('post_id')) if kwargs.get('post_id') else None
+#
+#         # 获取访问来源IP地址、平台和浏览器信息等相关信息
+#         ip_address = request.META.get('HTTP_X_FORWARDED_FOR', request.META['REMOTE_ADDR'])
+#         platform = request.META.get('HTTP_USER_AGENT', '').split('(')[1].split(';')[0]
+#         browser = request.META.get('HTTP_USER_AGENT', '')
+#
+#         # 创建一条新的访问日志记录
+#         access_log = AccessLog(
+#             user_id=user_id,
+#             post_id=post_id,
+#             ip_address=ip_address,
+#             platform=platform,
+#             browser=browser
+#         )
+#
+#         # 将access_log保存到数据库中，并打印出此次请求的session ID。
+#         access_log.save()
+#         print(f'Session ID: {request.session.session_key}, '
+#               f'User ID: {user_id}, '
+#               f'Post ID: {post_id}, '
+#               f'IP Address: {ip_address}, '
+#               f'Platform: {platform}, '
+#               f'Browser: {browser}')
+#
+#         return func(request, *args, **kwargs)
+#
+#     return wrapper
 
 
 # Create your views here.
@@ -35,11 +74,11 @@ from django.urls import reverse_lazy
 #         return render(request, 'blog/login.html')
 def login(request):
     if request.method == 'POST':
-        username_or_email = request.POST.get('username_or_email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
 
         # 使用 Django 的认证系统进行用户验证
-        user = authenticate(username=username_or_email, password=password)
+        user = authenticate(username=username, password=password)
         if user is not None:
             # 用户名和密码验证通过，将其登录并跳转到指定链接
             login_de(request, user)
@@ -85,7 +124,7 @@ def register(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         email = request.POST.get('email')
-
+        print("username=", username, "email=", email, "password=", password1)
         # 判断两次输入的密码是否相同
         if password1 != password2:
             error_msg = "两次输入的密码不一致！"
@@ -96,7 +135,9 @@ def register(request):
             User.objects.create_user(username=username, email=email, password=password1)
 
             # 用户创建成功，跳转到登录页面
-            return redirect('/login/')
+            success_msg = "注册成功，3秒后跳转到登录页面。"
+            return render(request, 'blog/register.html', {'success_msg': success_msg})
+
         except Exception as e:
             # 如果创建用户失败，则显示错误信息
             error_msg = "注册失败：" + str(e)
@@ -121,38 +162,6 @@ class LogoutView(LogoutView_de):
             return super().dispatch(request, *args, **kwargs)
         else:
             return redirect(reverse_lazy('index'))
-
-
-@login_required
-def log_access(request, post_id=None):
-    # 获取当前登录用户
-    user_id = request.user.id
-    # 获取当前访问的文章id，如果是浏览分类页面，则post_id为None
-    post_id = int(post_id) if post_id else None
-    # 获取访问来源IP地址、平台和浏览器信息等相关信息
-    ip_address = request.META.get('HTTP_X_FORWARDED_FOR', request.META['REMOTE_ADDR'])
-    platform = request.META.get('HTTP_USER_AGENT', '').split('(')[1].split(';')[0]
-    browser = request.META.get('HTTP_USER_AGENT', '')
-
-    # 创建一条新的访问日志记录
-    access_log = AccessLog(
-        user_id=user_id,
-        post_id=post_id,
-        ip_address=ip_address,
-        platform=platform,
-        browser=browser
-    )
-
-    # 将access_log保存到数据库中，并打印出此次请求的session ID。
-    access_log.save()
-    print(f'Session ID: {request.session.session_key}, '
-          f'User ID: {user_id}, '
-          f'Post ID: {post_id}, '
-          f'IP Address: {ip_address}, '
-          f'Platform: {platform}, '
-          f'Browser: {browser}')
-
-    return HttpResponse('Access log saved.')
 
 
 def post_list(request):
@@ -220,5 +229,3 @@ def new_post(request):
     # 如果请求方法不是POST，则返回新的HTTPResponse对象来显示创建文章表单
     context = {'categories': Category.objects.all()}
     return render(request, 'blog/new.html', context)
-
-

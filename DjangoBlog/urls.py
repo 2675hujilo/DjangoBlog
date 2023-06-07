@@ -18,7 +18,8 @@ from django.urls import path
 from django.views.generic import RedirectView
 from Blog import views
 from Blog.views import LogoutView
-
+from django.conf.urls.static import static
+from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', views.index, name='index'),
@@ -29,3 +30,4 @@ urlpatterns = [
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('new/', views.new_post, name='new_post')
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

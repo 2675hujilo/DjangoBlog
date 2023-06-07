@@ -1,4 +1,5 @@
 import os
+import re
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
@@ -218,12 +219,17 @@ def new_post(request):
     if request.method == 'POST':
         title = request.POST['title']
         content = request.POST['content']
+        # 匹配第一个url地址作为封面地址
+        # 若匹配不到则为随机图片
+        pattern = r'<img[^>]*src="(.*?)"'
+        result = re.search(pattern, content).group(1)
+        img_url = result if result else None
         category_id = request.POST.get('category_id')
         user_pk = request.user.pk
         # 获取分类和用户对象
         category_obj = Category.objects.get(pk=category_id)
         user_obj = User.objects.get(user_id=user_pk)
-        post = Post(title=title, content=content, user_id=user_obj)
+        post = Post(title=title, content=content, user_id=user_obj, image_url=img_url)
         post.save()
         # 添加分类到文章中
         post.categories.add(category_obj)
@@ -233,6 +239,7 @@ def new_post(request):
     # 如果请求方法不是POST，则返回新的HTTPResponse对象来显示创建文章表单
     context = {'categories': Category.objects.all()}
     return render(request, 'blog/new.html', context)
+
 
 def picture_view(request, path):
     image_path = os.path.join('/media/images/pic/', path)

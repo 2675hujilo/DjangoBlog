@@ -189,8 +189,7 @@ def post_detail(request, pk):
     comments = Comment.objects.filter(post_id=post.pk)
     comment_count = comments.count() if comments.exists() else 0
 
-    # 更新模板上下文，部分显示内容长度为前 200 字符
-    post.content = post.content[:200]
+    post.content = post.content
 
     return render(request, 'blog/post.html', {'post': post,
                                               'comment_count': comment_count})

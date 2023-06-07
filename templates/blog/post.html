@@ -3,9 +3,19 @@
 {% block content %}
     <main class="page blog-post">
         <section class="clean-block clean-post dark">
+
             <div class="container">
                 <div class="block-content">
-                    <div class="post-image" style="background-image:{% static "assets/img/scenery/image3.jpg" %};"></div>
+                    <div class="post-image" id="post-top-image" style="background-image:url(/media/images/pic/pic_01.png);"></div>
+                    <script type="text/javascript">
+                        function getRandomInt(min, max) {
+                            return Math.floor(Math.random() * (max - min)) + min;
+                        }
+
+                        var randomIndex = getRandomInt(1, 9);
+                        var heroSection = document.getElementById("post-top-image");
+                        heroSection.style.backgroundImage = "url('/media/images/pic/pic_0" + randomIndex + ".png')";
+                    </script>
                     <div class="post-body">
                         <h3>{{ post.title }}</h3>
                         <div class="post-info"><span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span></div>

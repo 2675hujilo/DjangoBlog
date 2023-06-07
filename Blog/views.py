@@ -125,6 +125,19 @@ def register(request):
         password2 = request.POST.get('password2')
         email = request.POST.get('email')
         print("username=", username, "email=", email, "password=", password1)
+
+        # 检查用户名和邮箱是否已经被注册
+        user_exists = User.objects.filter(username=username).exists()
+        email_exists = User.objects.filter(email=email).exists()
+
+        if user_exists:
+            error_msg = "用户名已被注册！"
+            return render(request, 'blog/register.html', {'error_msg': error_msg})
+
+        if email_exists:
+            error_msg = "邮箱已被注册！"
+            return render(request, 'blog/register.html', {'error_msg': error_msg})
+
         # 判断两次输入的密码是否相同
         if password1 != password2:
             error_msg = "两次输入的密码不一致！"
@@ -164,17 +177,6 @@ class LogoutView(LogoutView_de):
             return redirect(reverse_lazy('index'))
 
 
-def post_list(request):
-    # 获取所有文章实例（包括浏览量 views、点赞数 likes 和点踩数 dislikes）
-    posts = Post.objects.all().annotate(comment_count=Count('comment'))
-
-    for post in posts:
-        # 部分显示文章内容（前 200 个字符）
-        post.content = post.content[:200]
-
-    return render(request, 'blog/index.html', {'posts': posts})
-
-
 def post_detail(request, pk):
     # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
     post = get_object_or_404(Post, pk=pk)
@@ -204,7 +206,7 @@ def index(request):
         message = '欢迎您，' + str(request.user) + '！'
     # 用户未认证
     else:
-        message = '请登录以阅读文章。'
+        message = '请登录。'
 
     return render(request, 'blog/index.html', {'posts': posts, 'message': message})
 

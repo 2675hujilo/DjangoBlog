@@ -1,8 +1,11 @@
+import os
+
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.db.models import Count
+from django.http import FileResponse
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from functools import wraps
@@ -230,3 +233,8 @@ def new_post(request):
     # 如果请求方法不是POST，则返回新的HTTPResponse对象来显示创建文章表单
     context = {'categories': Category.objects.all()}
     return render(request, 'blog/new.html', context)
+
+def picture_view(request, path):
+    image_path = os.path.join('/media/images/pic/', path)
+    print(image_path)
+    return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')

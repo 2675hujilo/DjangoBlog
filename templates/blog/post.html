@@ -19,7 +19,7 @@
                     <div class="post-body">
                         <h3>{{ post.title }}</h3>
                         <div class="post-info"><span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span></div>
-                        <p>{{ post.content }}</p>
+                        <p>{{ post.content|safe }}</p>
                     </div>
                 </div>
             </div>

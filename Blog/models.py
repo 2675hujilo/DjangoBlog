@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.db import models
 
 # Create your models here.
@@ -68,7 +69,7 @@ class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = RichTextField(verbose_name='正文内容',config_name='default')
     image_url = models.URLField(null=True, blank=True)
     published_at = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     views = models.IntegerField(default=0)

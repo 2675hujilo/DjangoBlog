@@ -1,12 +1,10 @@
-from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
-from django.db import models
-
-# Create your models here.
-
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
-from django.contrib.auth.models import AbstractUser
+
+
+# Create your models here.
 
 
 class User(AbstractUser):
@@ -124,7 +122,7 @@ class Comment(models.Model):
 class AccessLog(models.Model):
     access_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(null=True, blank=True, verbose_name='用户ID')
-    user_name = models.CharField(max_length=50, verbose_name='用户名',null=True, blank=True)
+    user_name = models.CharField(max_length=50, verbose_name='用户名', null=True, blank=True)
     post_id = models.IntegerField(null=True, blank=True, verbose_name='访问文章ID')
     post_title = models.CharField(max_length=255, null=True, blank=True, verbose_name='访问文章标题')
     ip_address = models.CharField(max_length=100, verbose_name='IP地址')

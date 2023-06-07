@@ -5,12 +5,11 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
-from django.db.models import Count
 from django.http import FileResponse
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from functools import wraps
-from Blog.models import AccessLog, Post, Comment, User, Category
+
+from Blog.models import Post, Comment, User, Category
 
 
 # def log_access(func):

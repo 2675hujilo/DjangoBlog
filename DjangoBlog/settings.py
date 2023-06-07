@@ -59,8 +59,7 @@ ROOT_URLCONF = 'DjangoBlog.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -146,14 +145,13 @@ APPEND_SLASH = False
 
 AUTH_USER_MODEL = 'Blog.User'
 
-
 # 使用ck的工具栏并修改，宽度自适应
 CKEDITOR_CONFIGS = {
     # django-ckeditor默认使用default配置
     'default': {
         # 编辑器宽度自适应
-        'width':'auto',
-        'height':'300px',
+        'width': 'auto',
+        'height': '300px',
         # tab键转换空格数
         'tabSpaces': 4,
         # 工具栏风格
@@ -161,26 +159,26 @@ CKEDITOR_CONFIGS = {
         # 工具栏按钮
         'toolbar_Custom': [
             # 预览、表情
-            ['Preview','Smiley'],
+            ['Preview', 'Smiley'],
             # 字体风格
             ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
             # 字体颜色
             ['TextColor', 'BGColor'],
-            #格式、字体、大小
-            ['Format','Font','FontSize'],
+            # 格式、字体、大小
+            ['Format', 'Font', 'FontSize'],
             # 链接
             ['Link', 'Unlink'],
             # 列表
             ['Image', 'NumberedList', 'BulletedList'],
-            #居左，居中，居右
-            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+            # 居左，居中，居右
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
             # 最大化
             ['Maximize']
         ],
         # 加入代码块插件
-        'extraPlugins': ','.join(['codesnippet','image2','filebrowser','widget', 'lineutils']),
+        'extraPlugins': ','.join(['codesnippet', 'image2', 'filebrowser', 'widget', 'lineutils']),
     },
-    #评论
+    # 评论
     'comment': {
         # 编辑器宽度自适应
         'width': 'auto',
@@ -207,63 +205,8 @@ CKEDITOR_CONFIGS = {
 
     }
 }
-# CKEDITOR_CONFIGS = {
-#     'default': {
-#         'update': ['Image', 'Update', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
-#         'skin': 'moono',
-#         'toolbar_Basic': [
-#             ['Source', '-', 'Bold', 'Italic']
-#         ],
-#
-#         'toolbar_YourCustomToolbarConfig': [
-#             {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
-#             {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
-#             {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
-#             {'name': 'forms',
-#              'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
-#                        'HiddenField']},
-#             '/',
-#             {'name': 'basicstyles',
-#              'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
-#             {'name': 'paragraph',
-#              'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
-#                        'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
-#                        'Language']},
-#             {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
-#             {'name': 'insert',
-#              'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
-#             {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
-#             {'name': 'colors', 'items': ['TextColor', 'BGColor']},
-#             {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
-#             {'name': 'yourcustomtools', 'items': [
-#                 # 自定义控件
-#                 'Preview',
-#                 'Maximize',
-#             ]},
-#         ],
-#         'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
-#         'tabSpaces': 4,
-#         'extraPlugins': ','.join(
-#             [
-#                 # your extra plugins here
-#                 'div',
-#                 'autolink',
-#                 'autoembed',
-#                 'embedsemantic',
-#                 'autogrow',
-#                 # 'devtools',
-#                 'widget',
-#                 'lineutils',
-#                 'clipboard',
-#                 'dialog',
-#                 'dialogui',
-#                 'elementspath'
-#             ]),
-#     }
-# }
-
 
 # MEDIA_URL = os.path.join(BASE_DIR, 'media/')  # 上传图片的路径
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # 上传图片的根路径
 
-CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/uploads/')#文件保存为止，因为上边配置了media， 图片将保存至media/uploads下
+CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/uploads/')  # 文件保存为止，因为上边配置了media， 图片将保存至media/uploads下

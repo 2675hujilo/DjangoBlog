@@ -2,6 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
+from django import forms
 
 
 # Create your models here.
@@ -133,3 +134,10 @@ class AccessLog(models.Model):
     class Meta:
         db_table = 'access_log'
         verbose_name_plural = '访问日志'
+
+
+class NoteForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        fields = ['content']

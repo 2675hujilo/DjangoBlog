@@ -203,6 +203,12 @@ def index(request):
     for post in posts:
         # 部分显示文章内容（前 200 个字符）
         post.content = post.content[:200]
+        # 如果内容中有图片，则跳过该图片
+        while '<' in post.content and '>' in post.content:
+            start_index = post.content.index('<')
+            end_index = post.content.index('>', start_index) + 1
+            img_str = post.content[start_index:end_index]
+            post.content = post.content.replace(img_str, '', 1)
     # 用户已认证
     if request.user.is_authenticated:
         message = '欢迎您，' + str(request.user) + '！'

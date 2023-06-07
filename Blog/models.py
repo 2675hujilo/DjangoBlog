@@ -72,7 +72,7 @@ class Post(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户ID')
     title = models.CharField(max_length=255, verbose_name='文章标题')
     content = RichTextUploadingField(verbose_name='正文内容', config_name='default')
-    image_url = models.URLField(null=True, blank=True, verbose_name='配图链接')
+    image_url = models.CharField(max_length=255, null=True, blank=True, verbose_name='配图链接')
     published_at = models.DateTimeField(null=True, blank=True, auto_now_add=True, verbose_name='发布时间')
     views = models.IntegerField(default=0, verbose_name='阅读量')
     likes = models.IntegerField(default=0, verbose_name='点赞数')

@@ -151,36 +151,17 @@ CKEDITOR_CONFIGS = {
     'default': {
         # 编辑器宽度自适应
         'width': 'auto',
-        'height': 500,
+        'height': 'auto',
         # tab键转换空格数
         'tabSpaces': 4,
         # 工具栏风格
         'toolbar': 'full',
         # 工具栏按钮
-        'toolbar_full': [
-            ['Preview', 'Print', '-', 'Templates'],
-            ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-'],
-            ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat'],
-            '/',
-            ['Bold', 'Italic', 'Underline', 'Strike', '-'],
-            ['Subscript', 'Superscript'],
-            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-'],
-            ['Blockquote', '-', 'JustifyLeft', 'JustifyCenter',
-             'JustifyRight', 'JustifyBlock'],
-            ['Link', 'Unlink'],
-            ['Image', 'Flash', '-', 'Table',
-             '-', 'SpecialChar'],
-            '/',
-            ['Styles', 'Format', 'FontSize'],
-            ['TextColor', 'BGColor'],
-            ['Maximize', 'ShowBlocks']
 
-        ],
         # plugins
         "extraPlugins": ','.join([
-            # 'codesnippet',
-            # 'youtube',
-            # 'filebrowser'
+            'codesnippet',
+            'filebrowser',
         ]),
     },
 }

@@ -98,11 +98,13 @@ class Post(models.Model):
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')  # 外键关联到 user 表
+    username = models.CharField(max_length=50,verbose_name='用户名')
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='评论文章')  # 外键关联到 article 表
     parent_id = models.IntegerField(null=True, blank=True, verbose_name='父评论ID')
     root_id = models.IntegerField(null=True, blank=True, verbose_name='根评论ID')
-    content = models.TextField(verbose_name='评论内容')
+    content = RichTextUploadingField(verbose_name='评论内容')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    index = models.IntegerField(verbose_name="楼层")
     likes = models.IntegerField(default=0, verbose_name='点赞数')
     dislikes = models.IntegerField(default=0, verbose_name='踩数')
     status_choice = [
@@ -137,7 +139,6 @@ class AccessLog(models.Model):
 
 
 class NoteForm(forms.ModelForm):
-
     class Meta:
-        model = Post
+        model = Comment
         fields = ['content']

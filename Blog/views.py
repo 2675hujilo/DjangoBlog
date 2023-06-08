@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
-from django.http import FileResponse
+from django.core.paginator import Paginator
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 
@@ -188,14 +189,49 @@ def post_detail(request, pk):
     post.views += 1
     post.save()
 
-    # 获取该文章的所有评论实例，并统计数量
-    comments = Comment.objects.filter(post_id=post.pk)
-    comment_count = comments.count() if comments.exists() else 0
+    error_msg = None
 
-    post.content = post.content
+    # 检查用户是否登录，若未登录，则提示请登录；若已登录，则执行下面操作。
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            content = request.POST.get("content")
+            if content:
+                user_id = request.user.pk
 
-    return render(request, 'blog/post.html', {'post': post,
-                                              'comment_count': comment_count})
+                email = request.POST.get("email")
+                user = User.objects.get(pk=user_id)
+                index = Comment.objects.filter(post_id=post).count()
+                username = user.username
+                comment = Comment(
+                    user_id=user,
+                    username=username,
+                    post_id=post,
+                    parent_id=None,
+                    root_id=None,
+                    content=content,
+                    email=email,
+                    status="approved",
+                    is_top=False,
+                    index=index + 1
+                )
+                comment.save()
+            else:
+                error_msg = "请输入评论!"
+
+        # 获取该文章下的所有一级评论实例，并按照发布时间升序排列
+
+    else:
+        error_msg ="请先登录后再评论!"
+        # 若未登录，则提示请登录
+    comments = Comment.objects.filter(post_id=post.pk, parent_id=None).order_by("created_at")
+
+    # 分页处理
+    paginator = Paginator(comments, per_page=10, orphans=5)  # 每页10条记录，最后一页最少要有5条记录
+    page_num = request.GET.get("page", 1)  # 获取当前页数，默认为第一页
+    page_obj = paginator.get_page(page_num)
+
+    return render(request, "blog/post.html", {"post": post, "page_obj": page_obj, "error_msg": error_msg})
+
 
 
 def index(request):

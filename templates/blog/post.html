@@ -20,6 +20,32 @@
                         <h3>{{ post.title }}</h3>
                         <div class="post-info"><span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span></div>
                         <p>{{ post.content|safe }}</p>
+
+                        {% if page_obj %}
+                            <hr>
+                            {% for comment in page_obj %}
+                            <b>{{ comment.index }}楼</b><br>
+                                <b>{{ comment.username }}</b>发布于{{ comment.created_at }}:
+                                {{ comment.content|safe }}<br><hr>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="editor">发布评论</label>
+                                <textarea name="content" id="editor" rows="10"></textarea></div>
+                            <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+                            <script src="{% static 'ckeditor/adapters/jquery.js' %}"></script>
+                            <script type="text/javascript">
+                                CKEDITOR.replace('editor', {
+                                    filebrowserUploadUrl: '/media/uploads/',
+                                });
+                            </script>
+                            <button class="btn btn-primary btn-block" type="submit">发布</button>
+                            {% if error_msg %}
+                                <p style="color: red" class="alert alert-danger">{{ error_msg }}</p>
+                            {% endif %}
+                        </form>
                     </div>
                 </div>
             </div>

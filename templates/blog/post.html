@@ -5,7 +5,7 @@
         <section class="clean-block clean-post dark"  id="back-image-all" style="background-image:url(#);background-attachment: fixed;">
 
             <div class="container">
-                <div class="block-content">
+                <div class="block-content"  style="background-color:rgba(255, 255, 255, 0.4);">
                     <div class="post-image" id="post-top-image" style="background-image:url(/static/images/pic/pic_01.png);"></div>
                     <script type="text/javascript">
                         function getRandomInt(min, max) {
@@ -16,7 +16,7 @@
                         var heroSection = document.getElementById("post-top-image");
                         heroSection.style.backgroundImage = "url('/static/images/pic/pic_0" + randomIndex + ".png')";
                     </script>
-                    <div class="post-body">
+                    <div class="post-body"  >
                         <h3>{{ post.title }}</h3>
                         <div class="post-info"><span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span></div>
                         <p>{{ post.content|safe }}</p>

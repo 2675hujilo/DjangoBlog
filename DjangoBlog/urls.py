@@ -35,9 +35,9 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('new/', views.new_post, name='new_post'),
-    re_path(r'^media/images/pic/(?P<path>.*)$', picture_view),
     re_path(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
     re_path(r'^media/uploads/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
+    re_path(r'^media/images/pic/(?P<path>.*)$', picture_view),
 
 ]
 if settings.DEBUG:

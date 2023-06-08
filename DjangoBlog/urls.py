@@ -26,21 +26,21 @@ from django.conf import settings
 from DjangoBlog.settings import MEDIA_ROOT
 
 urlpatterns = [
-    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('admin/', admin.site.urls, name='admin'),
-    path('index/', views.index, name='index'),
     path('', RedirectView.as_view(url='index/')),
+    path('index/', views.index, name='index'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('new/', views.new_post, name='new_post'),
-    re_path(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
-    re_path(r'^media/uploads/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
-    re_path(r'^media/images/pic/(?P<path>.*)$', picture_view),
-
+    re_path(r'^media/uploads/(?P<path>.*)/$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^media/images/pic/(?P<path>.*)/$', picture_view),
+    re_path(r'^static/images/pic/(?P<path>.*)/$', picture_view),
+    re_path(r'^static/images/(?P<path>.*)/$', picture_view),
+    re_path(r'ckeditor/', include('ckeditor_uploader.urls')),
 ]
+
+# DEBUG模式下需要添加static路由，生产环境不需要
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-else:
-    urlpatterns.append(re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}))
+     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

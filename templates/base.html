@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>月亮之下 - 我熬落霞一壶，饮星月一盏，披风雪一裳，织山川一卷。</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico"%}">
     <link rel="stylesheet" href="{% static "assets/bootstrap/css/bootstrap.min.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/googleapis.css"%}">
     <link rel="stylesheet" href="{% static "assets/fonts/ionicons.min.css"%}">
     <link rel="stylesheet" href="{% static "assets/css/Footer-Basic.css"%}">
     <link rel="stylesheet" href="{% static "assets/css/baguetteBox.min.css"%}">
     <link rel="stylesheet" href="{% static "assets/css/smoothproducts.css"%}">
-    <link rel="shortcut icon" type="image/x-icon" href="/media/images/favicon.ico">
 </head>
 
 <body>
@@ -33,7 +33,7 @@
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <img src="/media/images/head.png" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
+                                <img src="{% static "images/head.png" %}" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
                             </a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="/index/">欢迎 {{ user.username }}!</a>

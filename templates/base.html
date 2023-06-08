@@ -32,9 +32,13 @@
 
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">欢迎 {{ user.username }}!</a>
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <img src="/media/images/head.png" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
+                            </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'logout' %}">登出</a>
+                                <a class="dropdown-item" href="/index/">欢迎 {{ user.username }}!</a>
+                                <a class="dropdown-item" href="/admin/">管理</a>
+                                <a class="dropdown-item" href="/logout/">登出</a>
                             </div>
                         </li>
                     {% else %}

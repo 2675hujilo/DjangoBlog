@@ -27,7 +27,7 @@ from DjangoBlog.settings import MEDIA_ROOT
 
 urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('index/', views.index, name='index'),
     path('', RedirectView.as_view(url='index/')),
     path('login/', views.login, name='login'),

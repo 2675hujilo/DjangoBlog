@@ -243,5 +243,4 @@ def new_post(request):
 
 def picture_view(request, path):
     image_path = os.path.join('/media/images/pic/', path)
-    print(image_path)
     return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')

@@ -2,8 +2,6 @@
 {% load static %}
 {% block content %}
     <main class="page registration-page">
-        <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
-        <script src="{% static 'ckeditor/adapters/jquery.js' %}"></script>
         <link rel="stylesheet" href="{% static 'ckeditor/contents.css' %}">
         <section class="clean-block clean-form dark">
             <div class="container">
@@ -11,11 +9,26 @@
                     <h2 class="text-info">发布帖子</h2>
                     <p>这里是发布帖子描述</p>
                 </div>
-                <form method="post">
-                {% csrf_token %}
-                    <div class="form-group"><label for="title">标题</label><input class="form-control item" type="text" id="title" name="title" required></div>
-                    <div class="form-group"><label for="content">内容</label><textarea class="ckeditor form-control item" name="content" id="content" rows="10" required></textarea>
-                    <div class="form-group"><label for="category_id">分类</label><input class="form-control item" type="text" id="category_id" name="category_id" required></div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">标题</label>
+                        <input class="form-control item" type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editor">内容</label>
+                        <textarea name="content" id="editor" rows="10"></textarea></div>
+                    <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+                    <script src="{% static 'ckeditor/adapters/jquery.js' %}"></script>
+                    <script type="text/javascript">
+                        CKEDITOR.replace('editor', {
+                            filebrowserUploadUrl: '/media/uploads/',
+                        });
+                    </script>
+                    <div class="form-group">
+                        <label for="category_id">分类</label>
+                        <input class="form-control item" type="text" id="category_id" name="category_id" required>
+                    </div>
                     <button class="btn btn-primary btn-block" type="submit">发布</button>
                     {% if error_msg %}
                         <p style="color: red" class="alert alert-danger">{{ error_msg }}</p>

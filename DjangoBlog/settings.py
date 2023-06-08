@@ -151,62 +151,42 @@ CKEDITOR_CONFIGS = {
     'default': {
         # 编辑器宽度自适应
         'width': 'auto',
-        'height': '300px',
+        'height': 500,
         # tab键转换空格数
         'tabSpaces': 4,
         # 工具栏风格
-        'toolbar': 'Custom',
+        'toolbar': 'full',
         # 工具栏按钮
-        'toolbar_Custom': [
-            # 预览、表情
-            ['Preview', 'Smiley'],
-            # 字体风格
-            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
-            # 字体颜色
-            ['TextColor', 'BGColor'],
-            # 格式、字体、大小
-            ['Format', 'Font', 'FontSize'],
-            # 链接
+        'toolbar_full': [
+            ['Preview', 'Print', '-', 'Templates'],
+            ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-'],
+            ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat'],
+            '/',
+            ['Bold', 'Italic', 'Underline', 'Strike', '-'],
+            ['Subscript', 'Superscript'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-'],
+            ['Blockquote', '-', 'JustifyLeft', 'JustifyCenter',
+             'JustifyRight', 'JustifyBlock'],
             ['Link', 'Unlink'],
-            # 列表
-            ['Image', 'NumberedList', 'BulletedList'],
-            # 居左，居中，居右
-            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            # 最大化
-            ['Maximize']
-        ],
-        # 加入代码块插件
-        'extraPlugins': ','.join(['codesnippet', 'image2', 'filebrowser', 'widget', 'lineutils']),
-    },
-    # 评论
-    'comment': {
-        # 编辑器宽度自适应
-        'width': 'auto',
-        'height': '140px',
-        # tab键转换空格数
-        'tabSpaces': 4,
-        # 工具栏风格
-        'toolbar': 'Custom',
-        # 工具栏按钮
-        'toolbar_Custom': [
-            # 表情 代码块
-            ['Smiley', 'CodeSnippet'],
-            # 字体风格
-            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
-            # 字体颜色
+            ['Image', 'Flash', '-', 'Table',
+             '-', 'SpecialChar'],
+            '/',
+            ['Styles', 'Format', 'FontSize'],
             ['TextColor', 'BGColor'],
-            # 链接
-            ['Link', 'Unlink'],
-            # 列表
-            ['NumberedList', 'BulletedList'],
-        ],
-        # 加入代码块插件
-        'extraPlugins': ','.join(['codesnippet']),
+            ['Maximize', 'ShowBlocks']
 
-    }
+        ],
+        # plugins
+        "extraPlugins": ','.join([
+            # 'codesnippet',
+            # 'youtube',
+            # 'filebrowser'
+        ]),
+    },
 }
 
-# MEDIA_URL = os.path.join(BASE_DIR, 'media/')  # 上传图片的路径
+MEDIA_URL = os.path.join( 'media/')  # 上传图片的路径
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # 上传图片的根路径
 
 CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/uploads/')  # 文件保存为止，因为上边配置了media， 图片将保存至media/uploads下
+FILE_UPLOAD_PERMISSIONS = 0o644

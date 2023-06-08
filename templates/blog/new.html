@@ -3,7 +3,7 @@
 {% block content %}
     <main class="page registration-page">
         <link rel="stylesheet" href="{% static 'ckeditor/contents.css' %}">
-        <section class="clean-block clean-form dark">
+        <section class="clean-block clean-post dark">
             <div class="container">
                 <div class="block-heading">
                     <h2 class="text-info">发布帖子</h2>
@@ -27,7 +27,11 @@
                     </script>
                     <div class="form-group">
                         <label for="category_id">分类</label>
-                        <input class="form-control item" type="text" id="category_id" name="category_id" required>
+                        <select name="category_id" id="category_id" required>
+                            {% for category in categories %}
+                                <option value="{{category.pk}}">{{category.name}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <button class="btn btn-primary btn-block" type="submit">发布</button>
                     {% if error_msg %}
@@ -37,4 +41,4 @@
             </div>
         </section>
     </main>
-{% endblock content %}
+{% endblock content %}@login_required(login_url='login')

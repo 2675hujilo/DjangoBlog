@@ -13,7 +13,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=50, unique=True, verbose_name='用户名')
     email = models.CharField(max_length=100, unique=True, verbose_name='电子邮件')
     password = models.CharField(max_length=100, verbose_name='密码')
-    avatar = models.CharField(max_length=255, null=True, blank=True, verbose_name='头像链接')
+    avatar = models.ImageField(max_length=255, null=True, blank=True, verbose_name='头像链接')
     nickname = models.CharField(max_length=50, null=False, blank=False, verbose_name='昵称')
     GENDER_CHOICES = (
         ('male', '男'),

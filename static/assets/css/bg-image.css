@@ -19,3 +19,12 @@
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(5px);
 }
+
+.bg-footer-tou{
+
+  background-image: url(/static/images/pic/2.jpg);
+  background-attachment: fixed;
+  /* 添加背景高斯模糊效果 */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
+}

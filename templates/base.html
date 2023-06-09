@@ -16,13 +16,13 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top clean-navbar bg-touming">
         <div class="container"><a class="navbar-brand logo" href="#">月亮之下</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">页面菜单</a>
-                        <div class="dropdown-menu">
+                        <div class="dropdown-menu bg-touming">
                             <a class="dropdown-item" href="{% url 'new_post' %}">发帖</a>
                             <a class="dropdown-item" href="{% url 'index' %}">页面2</a>
                             <a class="dropdown-item" href="{% url 'index' %}">页面3</a>
@@ -40,7 +40,7 @@
                                     <img src="/media/1.png" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
                                 {% endif %}
                             </a>
-                                <div class="dropdown-menu">
+                                <div class="dropdown-menu bg-touming">
                                     <a class="dropdown-item" href="/index/">欢迎 {{ user.username }}!</a>
                                     <a class="dropdown-item" href="/admin/">管理</a>
                                     <a class="dropdown-item" href="/logout/">登出</a>
@@ -63,22 +63,20 @@
         {% block content %}
         {% endblock content %}
     </main>
-    <footer class="page-footer">
-        <footer class="footer-basic">
-            <div class="social">
-                <a href="https://space.bilibili.com/175784627"><img src="{% static "images/bilibili.png" %}" alt=""></a>
-                <a href="https://github.com/2675hujilo"><img src="{% static "images/github.png" %}" alt=""></a>
-                <a href="https://qm.qq.com/cgi-bin/qm/qr?k=aznn-B5xkwRfTVjZxdOED8jEb4dovzke&noverify=0&personal_qrcode_source=1"><img src="{% static "images/qzone.png" %}" alt=""></a>
-            </div>
-            <ul class="list-inline">
-                <li class="list-inline-item"><a href="#">友情链接1</a></li>
-                <li class="list-inline-item"><a href="#">友情链接2</a></li>
-                <li class="list-inline-item"><a href="#">友情链接3</a></li>
-                <li class="list-inline-item"><a href="#">友情链接4</a></li>
-                <li class="list-inline-item"><a href="#">友情链接5</a></li>
-            </ul>
-            <p class="copyright">Copy Right © 2023</p>
-        </footer>
+    <footer class="footer-basic bg-footer-tou id="footer-img">
+        <div class="social" >
+            <a href="https://space.bilibili.com/175784627"><img src="{% static "images/bilibili.png" %}" alt=""></a>
+            <a href="https://github.com/2675hujilo"><img src="{% static "images/github.png" %}" alt=""></a>
+            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=aznn-B5xkwRfTVjZxdOED8jEb4dovzke&noverify=0&personal_qrcode_source=1"><img src="{% static "images/qzone.png" %}" alt=""></a>
+        </div>
+        <ul class="list-inline ">
+            <li class="list-inline-item"><a href="#">友情链接1</a></li>
+            <li class="list-inline-item"><a href="#">友情链接2</a></li>
+            <li class="list-inline-item"><a href="#">友情链接3</a></li>
+            <li class="list-inline-item"><a href="#">友情链接4</a></li>
+            <li class="list-inline-item"><a href="#">友情链接5</a></li>
+        </ul>
+        <p class="copyright">Copy Right © 2023</p>
     </footer>
     <script src="{% static "assets/js/bg-image.js" %}"></script>
     <script src="{% static "assets/js/jquery.min.js" %}"></script>

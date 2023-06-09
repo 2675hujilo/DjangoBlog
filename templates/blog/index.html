@@ -32,7 +32,7 @@
 
                             var randomIndex = getRandomInt(10, 19);
                             var postImg = document.getElementById("post-img-{{ forloop.counter }}");
-                              postImg.src = "{% static 'images/pic/pic_' %}" + randomIndex + ".jpg";
+                              postImg.src = "/static/images/pic/pic_" + randomIndex + ".jpg";
                         </script>
                     </div>
                 {% endfor %}

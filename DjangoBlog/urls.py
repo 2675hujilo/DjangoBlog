@@ -40,7 +40,4 @@ urlpatterns = [
     re_path(r'^static/images/(?P<path>.*)/$', picture_view),
     re_path(r'ckeditor/', include('ckeditor_uploader.urls')),
 ]
-
-# DEBUG模式下需要添加static路由，生产环境不需要
-if settings.DEBUG:
-     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

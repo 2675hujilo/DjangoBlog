@@ -2,10 +2,10 @@
 {% load static %}
 {% block content %}
     <main class="page blog-post-list">
-        <section class="clean-block clean-blog-list dark" id="back-image-all" style="background-image:url(#);background-attachment: fixed;">
+        <section class="clean-block clean-blog-list dark" id="back-image-all" style="background-image:url(#);">
             <div class="container">
                 <div class="block-heading">
-                    <section class="clean-block clean-hero" id="hero-section" style="background-image:url(#);color:rgba(255, 255, 255, 0.2);">
+                    <section class="clean-block clean-hero" id="hero-section" style="background-image:url(#);color:rgba(255, 255, 255, 0);">
                         <div class="text">
                             <h2>聚焦文字</h2>
                             <p>聚焦文字描述</p><button class="btn btn-outline-light btn-lg" type="button">阅读</button>
@@ -14,7 +14,7 @@
                 </div>
                 <h2 class="text-info">博客主界面</h2>
                 <p>博客主界面描述</p>
-                <div class="block-content"  id="back-image-all" style="background-color:rgba(255, 255, 255, 0.4);background-attachment: fixed;">
+                <div class="block-content"  id="back-image-all">
                 {% for post in posts %}
                     <div class="clean-blog-post">
                         <div class="row">

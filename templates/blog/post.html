@@ -39,12 +39,13 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
-
-                        <form method="post" enctype="multipart/form-data">
+                        <button class="btn btn-primary btn-block" id="show-comment-form-btn">写评论</button>
+                        <form method="post" enctype="multipart/form-data" style="display: none;" id="comment-form">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="editor">发布评论</label>
                                 <textarea name="content" id="editor" rows="10"></textarea></div>
+                            <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
                             <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
                             <script src="{% static 'ckeditor/adapters/jquery.js' %}"></script>
                             <script type="text/javascript">
@@ -57,6 +58,13 @@
                                 <p style="color: red" class="alert alert-danger">{{ error_msg }}</p>
                             {% endif %}
                         </form>
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                $("#show-comment-form-btn").click(function() {
+                                    $("#comment-form").toggle();
+                                });
+                            });
+                        </script>
                         <hr>
                         <!-- 分页 -->
                         <nav aria-label="Page navigation example">

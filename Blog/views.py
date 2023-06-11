@@ -205,7 +205,7 @@ def post_detail(request, pk):
                 user = User.objects.get(pk=user_id)
                 parent_id = request.POST.get("parent_id")
                 root_id = request.POST.get("root_id")
-                old_index = Comment.objects.filter(post_id=post).count()
+                old_index = Comment.objects.filter(post_id=post, root_id=None).count()
                 username = user.username
                 # 如果有父评论，则设置reply_to为父评论的username，否则为空
                 if parent_id:

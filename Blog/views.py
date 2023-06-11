@@ -20,7 +20,6 @@ from Blog.models import Post, Comment, User, Category, AccessLog
 #         # 获取当前登录用户
 #
 #         user_obj = User.objects.get(user_id=request.user.pk)
-#         print("user_obj=",user_obj)
 #         user_pk = user_obj if request.user.is_authenticated else None
 #         # 获取当前访问的文章id，如果是浏览分类页面，则post_id为None
 #         post_id = int(kwargs.get('post_id')) if kwargs.get('post_id') else None
@@ -41,12 +40,6 @@ from Blog.models import Post, Comment, User, Category, AccessLog
 #
 #         # 将access_log保存到数据库中，并打印出此次请求的session ID。
 #         access_log.save()
-#         print(f'Session ID: {request.session.session_key}, '
-#               f'User ID: {user_id}, '
-#               f'Post ID: {post_id}, '
-#               f'IP Address: {ip_address}, '
-#               f'Platform: {platform}, '
-#               f'Browser: {browser}')
 #
 #         return func(request, *args, **kwargs)
 #
@@ -129,7 +122,6 @@ def register(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         email = request.POST.get('email')
-        print("username=", username, "email=", email, "password=", password1)
 
         # 检查用户名和邮箱是否已经被注册
         user_exists = User.objects.filter(username=username).exists()
@@ -204,7 +196,6 @@ def post_detail(request, pk):
         if request.method == "POST":
             content = request.POST.get("content")
             if content:
-                print(request.POST)
                 user_id = request.user.pk
                 email = request.POST.get("email")
                 user = User.objects.get(pk=user_id)
@@ -215,13 +206,10 @@ def post_detail(request, pk):
                 username = user.username
                 # 如果有根评论，则设置reply_to为父评论的username，否则为空
                 if root_id:
-                    print("1")
                     reply_to = reply_to
                 elif reply_to:
-                    print("2")
                     reply_to = reply_to
                 else:
-                    print("3")
                     reply_to = None
                 if parent_id or root_id:
                     new_index = None
@@ -323,7 +311,6 @@ logger = logging.getLogger(__name__)
 class AccessLogMiddleware(MiddlewareMixin):
     def get_post_id(self, request):
         post_id = None
-        print('Request=', request)
         try:
             post_id_str = re.search(r'post/(\d+)/', request.path).group(1)
             # 正则表达式匹配出 1 这个字符串，并赋值给 post_id_str 变量

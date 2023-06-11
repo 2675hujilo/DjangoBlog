@@ -37,7 +37,7 @@
                                               placeholder="{% if comment.reply_to %}回复 {{ comment.reply_to }}：{% else %}回复 {{ comment.username }}：{% endif %}"
                                               class=form-control></input>
                                     <input type="hidden" name="root_id" value="{{ comment.comment_id }}">
-                                    <input type="hidden" name="reply_to" value="{% if comment.reply_to %}回复 {{ comment.reply_to }}：{% else %}回复 {{ comment.username }}：{% endif %}">
+                                    <input type="hidden" name="reply_to" value="{% if comment.reply_to %}{{ comment.reply_to }}{% else %}{{ comment.username }}{% endif %}">
                                     <button type="submit">回复</button>
                                 </form>
 

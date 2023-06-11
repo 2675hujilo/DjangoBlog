@@ -308,55 +308,67 @@ def picture_view(request, path):
 logger = logging.getLogger(__name__)
 
 
-class AccessLogMiddleware(MiddlewareMixin):
-    def get_post_id(self, request):
+def get_post_title(post_id):
+    post_title = None
+    if post_id:
+        post_title = Post.objects.get(post_id=post_id).title
+    return post_title if post_title else None
+
+
+def get_post_id(request):
+    post_id_str = re.search(r'post/(\d+)/', request.path)
+    # 正则表达式匹配出 1 这个字符串，并赋值给 post_id_str 变量
+    if post_id_str:
+        post_id = int(post_id_str.group(1))
+    else:
         post_id = None
-        try:
-            post_id_str = re.search(r'post/(\d+)/', request.path).group(1)
-            # 正则表达式匹配出 1 这个字符串，并赋值给 post_id_str 变量
-            post_id = int(post_id_str)
-        except Exception:
-            pass
-        return post_id if post_id else None
 
-    def get_post_title(self, post_id):
-        post_title = None
-        if post_id:
-            post_title = Post.objects.get(post_id=post_id).title
-        return post_title if post_title else None
+    return post_id
 
-    def is_valid_ip_address(self, ip_address):
-        # 此处请实现由具体业务负责检查IP地址是否合法的逻辑
-        return True
 
-    def get_client_ip(self, request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip_addresses = x_forwarded_for.split(',')
-            ip_address = ip_addresses[0].strip()
-        else:
-            ip_address = request.META.get('REMOTE_ADDR', '')
+def is_valid_ip_address(ip_address):
+    # 此处请实现由具体业务负责检查IP地址是否合法的逻辑
+    return True
 
-        # 如果IP地址不合法则视为攻击或误操作
-        if not self.is_valid_ip_address(ip_address):
-            suspicious_message = f"Suspicious IP address detected: {ip_address}"
-            logger.warning(suspicious_message)
-            raise SuspiciousOperation(suspicious_message)
 
-        return ip_address
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip_addresses = x_forwarded_for.split(',')
+        ip_address = ip_addresses[0].strip()
+    else:
+        ip_address = request.META.get('REMOTE_ADDR', '')
+
+    # 如果IP地址不合法则视为攻击或误操作
+    if not is_valid_ip_address(ip_address):
+        suspicious_message = f"Suspicious IP address detected: {ip_address}"
+        logger.warning(suspicious_message)
+        raise SuspiciousOperation(suspicious_message)
+
+    return ip_address
+
+
+class AccessLogMiddleware(MiddlewareMixin):
+    def __init__(self, get_response):
+        super().__init__(get_response)
+        self.post_title = None
+        self.post_id = None
+        self.ip_address = None
 
     def handle_request(self, request):
         try:
-            self.ip_address = self.get_client_ip(request)
+            self.ip_address = get_client_ip(request)
             if request.user.is_authenticated:
                 user_id = request.user.user_id
+                username = request.user.username
             else:
                 user_id = None
-            self.post_id = self.get_post_id(request)
-            self.post_title = self.get_post_title(self.post_id) if self.post_id else None
+                username = None
+            self.post_id = get_post_id(request)
+            self.post_title = get_post_title(self.post_id) if self.post_id else None
             access_record = AccessLog(
-
-                user_name=user_id,
+                user_id=user_id,
+                user_name=username,
                 post_id=self.post_id,
                 post_title=self.post_title,
                 ip_address=self.ip_address,

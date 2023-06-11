@@ -208,8 +208,8 @@ def post_detail(request, pk):
                 old_index = Comment.objects.filter(post_id=post, root_id=None).count()
                 username = user.username
                 # 如果有父评论，则设置reply_to为父评论的username，否则为空
-                if parent_id:
-                    reply_to = Comment.objects.get(comment_id=parent_id).username
+                if root_id:
+                    reply_to = Comment.objects.get(comment_id=root_id).username
                 else:
                     reply_to = None
                 if parent_id or root_id:
@@ -233,7 +233,7 @@ def post_detail(request, pk):
             else:
                 error_msg = "请输入评论！"
 
-        comments = Comment.objects.filter(post_id=post.pk, parent_id=None).order_by("created_at")
+        comments = Comment.objects.filter(post_id=post.pk, root_id=None).order_by("created_at")
         for comment in comments:
             comment.children = get_children(comment)
 

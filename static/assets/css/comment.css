@@ -1,0 +1,32 @@
+.comment-children {
+  color: #666; /* 默认字体颜色为灰色 */
+  background: none; /* 背景颜色为透明 */
+}
+
+/* 设置鼠标悬浮时的样式 */
+.comment-children:hover {
+  color: black; /* 鼠标悬浮时字体颜色为黑色 */
+}
+
+/* 取消文字选中状态 */
+.comment-children ::selection {
+  background-color: transparent;
+}
+
+.comment-children ::-moz-selection {
+  background-color: transparent;
+}
+
+/* 将所有表单元素的边框样式设置为none */
+.comment-children input,
+.comment-children textarea,
+.comment-children select {
+  border-style: none;
+  outline: none;
+}
+
+/* 去除按钮默认样式（可选）*/
+.comment-children button {
+  border: none;
+  background-color: transparent;
+}

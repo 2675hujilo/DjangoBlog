@@ -100,8 +100,8 @@ class Post(models.Model):
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')  # 外键关联到 user 表
-    username = models.CharField(max_length=50, verbose_name='用户名')
-    reply_to = models.CharField(max_length=50, null=True, blank=True, verbose_name='回复的用户名')
+    username = models.CharField(max_length=255, verbose_name='用户名')
+    reply_to = models.CharField(max_length=255, null=True, blank=True, verbose_name='回复的用户名')
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='评论文章')  # 外键关联到 article 表
     parent_id = models.IntegerField(null=True, blank=True, verbose_name='父评论ID')
     root_id = models.IntegerField(null=True, blank=True, verbose_name='根评论ID')

@@ -27,7 +27,7 @@
                             <div class="parent-comment">
                                 <hr>
                                 <b>{{ comment.index }}楼</b><br>
-                                <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}
+                                <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}<button class="reply-btn comment-children" style="border: none;">回复</button><p></p>
                                 {{ comment.content|safe }}<br>
 
                                 <!-- 添加回复文本输入表单 -->
@@ -39,21 +39,18 @@
                                     <input type="hidden" name="root_id" value="{{ comment.comment_id }}">
                                     <input type="hidden" name="reply_to" value="
                                             {% if comment.reply_to %}{{ comment.reply_to }}{% else %}{{ comment.username }}{% endif %}">
-                                    <button type="submit">回复</button>
+                                    <button type="submit" class="comment-children" style="border: none;">回复ri</button>
                                 </form>
 
                                 {% if comment.children.exists %}
                                     {% for child_comment in comment.children.all %}
                                         <div class="parent-comment">
                                             <b>{{ child_comment.username }}</b> 回复
-                                            <b>{{ child_comment.reply_to }}:</b> {{ child_comment.content|safe }}
-                                            <br>
+                                            <b>{{ child_comment.reply_to }}:</b>{{ child_comment.content|safe }}
+
 
                                             <!-- 添加回复按钮 -->
-                                            <button class="btn-reply"
-                                                    onclick="$(this).closest('.parent-comment').find('.reply-form').toggle()">
-                                                回复
-                                            </button>
+                                            <button class="comment-children" style="border: none;" onclick="$(this).closest('.parent-comment').find('.reply-form').toggle()">回复</button><br>
 
                                             <!-- 添加回复文本输入表单 -->
                                             <form method="post" style="display:none;" class="reply-form">
@@ -65,14 +62,11 @@
                                                 <input type="hidden" name="reply_to" value="
                                                         {% if child_comment.username %}{{ child_comment.username }}{% else %}{{ comment.comment_username }}{% endif %}">
                                                 <input type="hidden" name="root_to" value="{{ comment.comment_id }}">
-                                                <button type="submit">提交</button>
+                                                <button type="submit" class="comment-children" style="border: none;">提交</button>
                                             </form>
                                         </div>
                                     {% endfor %}
                                 {% endif %}
-
-                                <!-- 显示按钮来展开/关闭回复表单 -->
-                                <button class="btn btn-primary reply-btn">回复</button>
                             </div>
                         {% endfor %}
 

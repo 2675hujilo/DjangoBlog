@@ -188,7 +188,7 @@ def post_detail(request, pk):
     post.save()
 
     error_msg = None
-    comments=None
+    comments = None
     # 检查用户是否登录，若未登录，则提示请登录；若已登录，则执行下面操作。
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -229,7 +229,7 @@ def post_detail(request, pk):
         #     comment.children.set(children_comments)
 
     # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
-    paginator = Paginator(comments, per_page=10, orphans=5)
+    paginator = Paginator(comments, per_page=10, orphans=True)
 
     # 获取当前请求中page参数的值（即所请求的页数）
     # 如果request.GET中不存在page参数，默认为第一页
@@ -238,12 +238,12 @@ def post_detail(request, pk):
     # 调用Paginator对象的get_page()方法获取对应得Page对象
     # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
     page_obj = paginator.get_page(page_num)
-
     return render(request, "blog/post.html", {"post": post, "page_obj": page_obj, "error_msg": error_msg})
 
 
 def index(request):
-    posts = Post.objects.all()
+    # 获取所有文章
+    posts = Post.objects.all().order_by("-updated_at")
     for post in posts:
         # 部分显示文章内容（前 200 个字符）
         post.content = post.content[:200]
@@ -253,14 +253,17 @@ def index(request):
             end_index = post.content.index('>', start_index) + 1
             img_str = post.content[start_index:end_index]
             post.content = post.content.replace(img_str, '', 1)
+
+    paginator = Paginator(posts, per_page=5, orphans=True)
+    page_num = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_num)
     # 用户已认证
     if request.user.is_authenticated:
         message = '欢迎您，' + str(request.user) + '！'
     # 用户未认证
     else:
         message = '请登录。'
-
-    return render(request, 'blog/index.html', {'posts': posts, 'message': message})
+    return render(request, 'blog/index.html', {'message': message, "posts": page_obj})
 
 
 @login_required(login_url='login')

@@ -392,7 +392,7 @@ class AccessLogMiddleware(MiddlewareMixin):
         except SuspiciousOperation as err:
             logger.warning(str(err))
 
-    def process_view(self, request):
+    def process_view(self, request, view_func, view_args, view_kwargs):
         self.handle_request(request)
         return None
 

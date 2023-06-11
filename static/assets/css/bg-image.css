@@ -28,3 +28,10 @@
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(5px);
 }
+#back-image-all {
+  background-color:rgba(255, 255, 255, 0.4);
+  background-attachment: fixed;
+  /* 添加背景高斯模糊效果 */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
+}

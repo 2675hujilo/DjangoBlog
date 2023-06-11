@@ -34,10 +34,11 @@
                                 <form method="post" style="display:none;" class="reply-form">
                                     {% csrf_token %}
                                     <input name="content"
-                                              placeholder="{% if comment.reply_to %}回复 {{ comment.reply_to }}：{% else %}回复 {{ comment.username }}：{% endif %}"
-                                              class=form-control></input>
+                                           placeholder="{% if comment.reply_to %}回复 {{ comment.reply_to }}：{% else %}回复 {{ comment.username }}：{% endif %}"
+                                           class=form-control>
                                     <input type="hidden" name="root_id" value="{{ comment.comment_id }}">
-                                    <input type="hidden" name="reply_to" value="{% if comment.reply_to %}{{ comment.reply_to }}{% else %}{{ comment.username }}{% endif %}">
+                                    <input type="hidden" name="reply_to" value="
+                                            {% if comment.reply_to %}{{ comment.reply_to }}{% else %}{{ comment.username }}{% endif %}">
                                     <button type="submit">回复</button>
                                 </form>
 
@@ -58,10 +59,11 @@
                                             <form method="post" style="display:none;" class="reply-form">
                                                 {% csrf_token %}
                                                 <input name="content"
-                                                          placeholder=" 回复 {{ child_comment.username }}： "
-                                                          class=form-control></input>
+                                                       placeholder=" 回复 {{ child_comment.username }}： "
+                                                       class=form-control>
                                                 <input type="hidden" name="root_id" value="{{ comment.comment_id }}">
-                                                <input type="hidden" name="reply_to" value="{% if child_comment.username %}{{ child_comment.username }}{% else %}{{ comment.comment_username }}{% endif %}">
+                                                <input type="hidden" name="reply_to" value="
+                                                        {% if child_comment.username %}{{ child_comment.username }}{% else %}{{ comment.comment_username }}{% endif %}">
                                                 <input type="hidden" name="root_to" value="{{ comment.comment_id }}">
                                                 <button type="submit">提交</button>
                                             </form>

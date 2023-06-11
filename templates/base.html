@@ -37,7 +37,7 @@
                                 {% if user.avatar %}
                                     <img src="/media/{{ user.avatar }}" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
                                 {% else %}
-                                    <img src="/media/1.png" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
+                                    <img src="/static/images/head.png" class="avatar-img rounded-circle img-fluid" height="30" width="30" alt="">
                                 {% endif %}
                             </a>
                                 <div class="dropdown-menu bg-touming">
@@ -78,11 +78,11 @@
         </ul>
         <p class="copyright">Copy Right © 2023</p>
     </footer>
-    <script src="{% static "assets/js/bg-image.js" %}"></script>
-    <script src="{% static "assets/js/jquery.min.js" %}"></script>
-    <script src="{% static "assets/bootstrap/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "assets/js/baguetteBox.min.js"%}"></script>
-    <script src="{% static "assets/js/smoothproducts.min.js" %}"></script>
-    <script src="{% static "assets/js/theme.js" %}"></script>
+    <script defer src="{% static "assets/js/bg-image.js" %}"></script>
+    <script defer src="{% static "assets/js/jquery.min.js" %}"></script>
+    <script defer src="{% static "assets/bootstrap/js/bootstrap.min.js" %}"></script>
+    <script defer src="{% static "assets/js/baguetteBox.min.js"%}"></script>
+    <script defer src="{% static "assets/js/smoothproducts.min.js" %}"></script>
+    <script defer src="{% static "assets/js/theme.js" %}"></script>
 </body>
 </html>

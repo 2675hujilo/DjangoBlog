@@ -195,13 +195,18 @@ def post_detail(request, pk):
             content = request.POST.get("content")
             if content:
                 user_id = request.user.pk
-
                 email = request.POST.get("email")
                 user = User.objects.get(pk=user_id)
                 parent_id = request.POST.get("parent_id")
                 root_id = request.POST.get("root_id")
                 index = Comment.objects.filter(post_id=post).count()
                 username = user.username
+                # 如果有父评论，则设置reply_to为父评论的username，否则为空
+                if parent_id:
+                    reply_to = Comment.objects.get(comment_id=parent_id).username
+                else:
+                    reply_to = None
+
                 comment = Comment(
                     user_id=user,
                     username=username,
@@ -212,7 +217,8 @@ def post_detail(request, pk):
                     email=email,
                     status="approved",
                     is_top=False,
-                    index=index + 1
+                    index=index + 1,
+                    reply_to=reply_to,
                 )
                 comment.save()
             else:
@@ -223,10 +229,10 @@ def post_detail(request, pk):
     else:
         error_msg = "请先登录后再评论！"
 
-    for comment in comments:
-        children_comments = Comment.objects.filter(post_id=post.pk, root_id=comment.index)
-        # if children_comments:
-        #     comment.children.set(children_comments)
+    # for comment in comments:
+    #     children_comments = Comment.objects.filter(post_id=post.pk, root_id=comment.index)
+    #     if children_comments:
+    #         comment.children.set(children_comments)
 
     # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
     paginator = Paginator(comments, per_page=10, orphans=True)

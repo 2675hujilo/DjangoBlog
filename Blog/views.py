@@ -355,6 +355,8 @@ class AccessLogMiddleware(MiddlewareMixin):
         self.post_id = None
         self.ip_address = None
 
+    logging.info("123")
+    print(logger)
     def handle_request(self, request):
         try:
             self.ip_address = get_client_ip(request)
@@ -366,6 +368,8 @@ class AccessLogMiddleware(MiddlewareMixin):
                 username = None
             self.post_id = get_post_id(request)
             self.post_title = get_post_title(self.post_id) if self.post_id else None
+            body = request.body
+            content_type = request.content_type
             access_record = AccessLog(
                 user_id=user_id,
                 user_name=username,
@@ -379,6 +383,8 @@ class AccessLogMiddleware(MiddlewareMixin):
                 referer=request.META.get('HTTP_REFERER', ''),
                 request_url=request.build_absolute_uri(),
                 http_method=request.method,
+                body=body,
+                content_type=content_type,
                 user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
             )
 

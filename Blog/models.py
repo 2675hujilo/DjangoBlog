@@ -141,7 +141,8 @@ class AccessLog(models.Model):
     request_url = models.TextField(null=True, blank=True, verbose_name="请求地址")
     http_method = models.CharField(max_length=10, null=True, blank=True, verbose_name="HTTP 请求方法")
     user_agent_string = models.TextField(null=True, blank=True, verbose_name="用户代理字符串")
-    information=models.TextField(null=True, blank=True, verbose_name="自定义信息")
+    body = models.TextField(null=True, blank=True, verbose_name="请求体")
+    content_type = models.CharField(max_length=255, verbose_name='请求类型', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
     class Meta:

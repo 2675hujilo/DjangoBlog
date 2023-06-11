@@ -355,8 +355,6 @@ class AccessLogMiddleware(MiddlewareMixin):
         self.post_id = None
         self.ip_address = None
 
-    logging.info("123")
-    print(logger)
     def handle_request(self, request):
         try:
             self.ip_address = get_client_ip(request)
@@ -394,7 +392,7 @@ class AccessLogMiddleware(MiddlewareMixin):
         except SuspiciousOperation as err:
             logger.warning(str(err))
 
-    def process_view(self, request, view_func, view_args, view_kwargs):
+    def process_view(self, request):
         self.handle_request(request)
         return None
 

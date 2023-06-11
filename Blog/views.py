@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
@@ -11,8 +12,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 from Blog.models import Post, Comment, User, Category, AccessLog
-from django.views import View
-from django_user_agents.utils import get_user_agent
+
 
 # def log_access(func):
 #     @wraps(func)
@@ -321,6 +321,22 @@ logger = logging.getLogger(__name__)
 
 
 class AccessLogMiddleware(MiddlewareMixin):
+    def get_post_id(self, request):
+        post_id = None
+        print('Request=', request)
+        try:
+            post_id_str = re.search(r'post/(\d+)/', request.path).group(1)
+            # 正则表达式匹配出 1 这个字符串，并赋值给 post_id_str 变量
+            post_id = int(post_id_str)
+        except Exception:
+            pass
+        return post_id if post_id else None
+
+    def get_post_title(self, post_id):
+        post_title = None
+        if post_id:
+            post_title = Post.objects.get(post_id=post_id).title
+        return post_title if post_title else None
 
     def is_valid_ip_address(self, ip_address):
         # 此处请实现由具体业务负责检查IP地址是否合法的逻辑
@@ -349,11 +365,13 @@ class AccessLogMiddleware(MiddlewareMixin):
                 user_id = request.user.user_id
             else:
                 user_id = None
+            self.post_id = self.get_post_id(request)
+            self.post_title = self.get_post_title(self.post_id) if self.post_id else None
             access_record = AccessLog(
 
                 user_name=user_id,
-                post_id=request.GET.get('post_id'),
-                post_title=request.GET.get('post_title'),
+                post_id=self.post_id,
+                post_title=self.post_title,
                 ip_address=self.ip_address,
                 platform_name=request.user_agent.os.family,
                 platform_version=request.user_agent.os.version_string,

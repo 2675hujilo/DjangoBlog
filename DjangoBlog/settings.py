@@ -40,9 +40,12 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'rest_framework',
     'mptt',
+    'django_user_agents',
 ]
 
 MIDDLEWARE = [
+    'Blog.views.AccessLogMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

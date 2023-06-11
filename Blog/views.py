@@ -1,14 +1,18 @@
+import logging
 import os
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
+from django.core.exceptions import SuspiciousOperation
 from django.core.paginator import Paginator
 from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from Blog.models import Post, Comment, User, Category
-
+from django.utils.deprecation import MiddlewareMixin
+from Blog.models import Post, Comment, User, Category, AccessLog
+from django.views import View
+from django_user_agents.utils import get_user_agent
 
 # def log_access(func):
 #     @wraps(func)
@@ -200,13 +204,13 @@ def post_detail(request, pk):
         if request.method == "POST":
             content = request.POST.get("content")
             if content:
-                print(request.POST  )
+                print(request.POST)
                 user_id = request.user.pk
                 email = request.POST.get("email")
                 user = User.objects.get(pk=user_id)
                 parent_id = request.POST.get("parent_id")
                 root_id = request.POST.get("root_id")
-                reply_to=request.POST.get("reply_to")
+                reply_to = request.POST.get("reply_to")
                 old_index = Comment.objects.filter(post_id=post, root_id=None).count()
                 username = user.username
                 # 如果有根评论，则设置reply_to为父评论的username，否则为空
@@ -215,7 +219,7 @@ def post_detail(request, pk):
                     reply_to = reply_to
                 elif reply_to:
                     print("2")
-                    reply_to= reply_to
+                    reply_to = reply_to
                 else:
                     print("3")
                     reply_to = None
@@ -311,3 +315,66 @@ def new_post(request):
 def picture_view(request, path):
     image_path = os.path.join('/media/images/pic/', path)
     return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
+
+
+logger = logging.getLogger(__name__)
+
+
+class AccessLogMiddleware(MiddlewareMixin):
+
+    def is_valid_ip_address(self, ip_address):
+        # 此处请实现由具体业务负责检查IP地址是否合法的逻辑
+        return True
+
+    def get_client_ip(self, request):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_addresses = x_forwarded_for.split(',')
+            ip_address = ip_addresses[0].strip()
+        else:
+            ip_address = request.META.get('REMOTE_ADDR', '')
+
+        # 如果IP地址不合法则视为攻击或误操作
+        if not self.is_valid_ip_address(ip_address):
+            suspicious_message = f"Suspicious IP address detected: {ip_address}"
+            logger.warning(suspicious_message)
+            raise SuspiciousOperation(suspicious_message)
+
+        return ip_address
+
+    def handle_request(self, request):
+        try:
+            self.ip_address = self.get_client_ip(request)
+            if request.user.is_authenticated:
+                user_id = request.user.user_id
+            else:
+                user_id = None
+            access_record = AccessLog(
+
+                user_name=user_id,
+                post_id=request.GET.get('post_id'),
+                post_title=request.GET.get('post_title'),
+                ip_address=self.ip_address,
+                platform_name=request.user_agent.os.family,
+                platform_version=request.user_agent.os.version_string,
+                browser_family=request.user_agent.browser.family,
+                browser_version=request.user_agent.browser.version_string,
+                referer=request.META.get('HTTP_REFERER', ''),
+                request_url=request.build_absolute_uri(),
+                http_method=request.method,
+                user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
+            )
+
+            # 在数据库中保存访问记录
+            access_record.save()
+
+        except SuspiciousOperation as err:
+            logger.warning(str(err))
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        self.handle_request(request)
+        return None
+
+    def process_exception(self, request, exception):
+        self.handle_request(request)
+        raise exception

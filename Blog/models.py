@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Q
 from django import forms
 from mptt.models import MPTTModel
+import platform
+from user_agents import parse
 
 
 # Create your models here.
@@ -106,7 +108,7 @@ class Comment(models.Model):
     root_id = models.IntegerField(null=True, blank=True, verbose_name='根评论ID')
     content = RichTextUploadingField(verbose_name='评论内容')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    index = models.IntegerField(null=True, blank=True,verbose_name="楼层")
+    index = models.IntegerField(null=True, blank=True, verbose_name="楼层")
     likes = models.IntegerField(default=0, verbose_name='点赞数')
     dislikes = models.IntegerField(default=0, verbose_name='踩数')
     status_choice = [
@@ -131,13 +133,35 @@ class AccessLog(models.Model):
     post_id = models.IntegerField(null=True, blank=True, verbose_name='访问文章ID')
     post_title = models.CharField(max_length=255, null=True, blank=True, verbose_name='访问文章标题')
     ip_address = models.CharField(max_length=100, verbose_name='IP地址')
-    platform = models.CharField(max_length=50, null=True, verbose_name='操作系统')
-    browser = models.CharField(max_length=255, null=True, verbose_name='浏览器')
+    platform_name = models.CharField(max_length=50, null=True, verbose_name='操作系统名称')
+    platform_version = models.CharField(max_length=50, null=True, verbose_name='操作系统版本')
+    browser_family = models.CharField(max_length=50, null=True, verbose_name='浏览器品牌')
+    browser_version = models.CharField(max_length=50, null=True, verbose_name='浏览器版本')
+    referer = models.TextField(null=True, blank=True, verbose_name="来源")
+    request_url = models.TextField(null=True, blank=True, verbose_name="请求地址")
+    http_method = models.CharField(max_length=10, null=True, blank=True, verbose_name="HTTP 请求方法")
+    user_agent_string = models.TextField(null=True, blank=True, verbose_name="用户代理字符串")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
     class Meta:
         db_table = 'access_log'
         verbose_name_plural = '访问日志'
+
+    @property
+    def user_agent(self):
+        return parse(self.user_agent_string)
+
+    @property
+    def device_type(self):
+        return str(self.user_agent.device)
+
+    @property
+    def browser_name(self):
+        return str(self.user_agent.browser)
+
+    @property
+    def os(self):
+        return str(self.user_agent.os)
 
 
 class NoteForm(forms.ModelForm):

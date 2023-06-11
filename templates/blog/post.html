@@ -20,15 +20,22 @@
                         <h3>{{ post.title }}</h3>
                         <div class="post-info"><span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span></div>
                         <p>{{ post.content|safe }}</p>
-
-                        {% if page_obj %}
-                            <hr>
-                            {% for comment in page_obj %}
-                            <b>{{ comment.index }}楼</b><br>
-                                <b>{{ comment.username }}</b>发布于{{ comment.created_at }}:
+                        {% for comment in page_obj %}
+                            <div class="parent-comment">
+                                <b>{{ comment.index }}楼</b><br>
+                                <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}
                                 {{ comment.content|safe }}<br><hr>
-                            {% endfor %}
-                        {% endif %}
+                                {% if comment.children.exists %}
+                                    {% for child_comment in comment.children.all %}
+                                        <div class="parent-comment">
+                                            <i>{{ child_comment.username }}</i>回复<b>{{ comment.username }}</b>：
+                                            {{ child_comment.content|safe }}<br><hr>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="form-group">

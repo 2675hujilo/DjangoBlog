@@ -1,6 +1,5 @@
 import os
 import re
-
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
@@ -9,7 +8,6 @@ from django.core.paginator import Paginator
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-
 from Blog.models import Post, Comment, User, Category
 
 
@@ -200,14 +198,16 @@ def post_detail(request, pk):
 
                 email = request.POST.get("email")
                 user = User.objects.get(pk=user_id)
+                parent_id = request.POST.get("parent_id")
+                root_id = request.POST.get("root_id")
                 index = Comment.objects.filter(post_id=post).count()
                 username = user.username
                 comment = Comment(
                     user_id=user,
                     username=username,
                     post_id=post,
-                    parent_id=None,
-                    root_id=None,
+                    parent_id=parent_id,
+                    root_id=root_id,
                     content=content,
                     email=email,
                     status="approved",
@@ -216,22 +216,23 @@ def post_detail(request, pk):
                 )
                 comment.save()
             else:
-                error_msg = "请输入评论!"
+                error_msg = "请输入评论！"
 
-        # 获取该文章下的所有一级评论实例，并按照发布时间升序排列
+        comments = Comment.objects.filter(post_id=post.pk, parent_id=None).order_by("created_at")
 
     else:
-        error_msg ="请先登录后再评论!"
-        # 若未登录，则提示请登录
-    comments = Comment.objects.filter(post_id=post.pk, parent_id=None).order_by("created_at")
+        error_msg = "请先登录后再评论！"
 
-    # 分页处理
-    paginator = Paginator(comments, per_page=10, orphans=5)  # 每页10条记录，最后一页最少要有5条记录
-    page_num = request.GET.get("page", 1)  # 获取当前页数，默认为第一页
+    for comment in comments:
+        children_comments = Comment.objects.filter(post_id=post.pk, root_id=comment.index)
+        if children_comments:
+            comment.children.set(children_comments)
+
+    paginator = Paginator(comments, per_page=10, orphans=5)
+    page_num = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_num)
 
     return render(request, "blog/post.html", {"post": post, "page_obj": page_obj, "error_msg": error_msg})
-
 
 
 def index(request):

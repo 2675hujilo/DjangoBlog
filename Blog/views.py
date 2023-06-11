@@ -200,17 +200,24 @@ def post_detail(request, pk):
         if request.method == "POST":
             content = request.POST.get("content")
             if content:
+                print(request.POST  )
                 user_id = request.user.pk
                 email = request.POST.get("email")
                 user = User.objects.get(pk=user_id)
                 parent_id = request.POST.get("parent_id")
                 root_id = request.POST.get("root_id")
+                reply_to=request.POST.get("reply_to")
                 old_index = Comment.objects.filter(post_id=post, root_id=None).count()
                 username = user.username
-                # 如果有父评论，则设置reply_to为父评论的username，否则为空
+                # 如果有根评论，则设置reply_to为父评论的username，否则为空
                 if root_id:
-                    reply_to = Comment.objects.get(comment_id=root_id).username
+                    print("1")
+                    reply_to = reply_to
+                elif reply_to:
+                    print("2")
+                    reply_to= reply_to
                 else:
+                    print("3")
                     reply_to = None
                 if parent_id or root_id:
                     new_index = None

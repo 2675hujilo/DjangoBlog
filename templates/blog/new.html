@@ -19,7 +19,7 @@
                         <label for="category_id">分类</label>
                         <select class="form-control item" name="category_id" id="category_id" required>
                             {% for category in categories %}
-                                <option value="{{category.pk}}">{{category.name}}</option>
+                                <option value="{{ category.pk }}">{{ category.name }}</option>
                             {% endfor %}
                         </select>
                     </div>

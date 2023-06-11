@@ -106,7 +106,7 @@ class Comment(models.Model):
     root_id = models.IntegerField(null=True, blank=True, verbose_name='根评论ID')
     content = RichTextUploadingField(verbose_name='评论内容')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    index = models.IntegerField(verbose_name="楼层")
+    index = models.IntegerField(null=True, blank=True,verbose_name="楼层")
     likes = models.IntegerField(default=0, verbose_name='点赞数')
     dislikes = models.IntegerField(default=0, verbose_name='踩数')
     status_choice = [

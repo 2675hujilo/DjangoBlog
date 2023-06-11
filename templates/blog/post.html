@@ -29,16 +29,15 @@
                                 <b>{{ comment.index }}楼</b><br>
                                 <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}
                                 {{ comment.content|safe }}<br>
-                                <hr>
-{#                                {% if comment.children.exists %}#}
-{#                                    {% for child_comment in comment.children.all %}#}
-{#                                        <div class="parent-comment">#}
-{#                                            <i>{{ child_comment.username }}</i>回复<b>{{ comment.username }}</b>：#}
-{#                                            {{ child_comment.content|safe }}<br>#}
-{#                                            <hr>#}
-{#                                        </div>#}
-{#                                    {% endfor %}#}
-{#                                {% endif %}#}
+                                {% if comment.children.exists %}
+                                    {% for child_comment in comment.children.all %}
+                                        <div class="parent-comment">
+                                            <i>{{ child_comment.username }}</i>回复<b>{{ comment.username }}:</b>：
+                                            {{ child_comment.content|safe }}<br>
+                                            <hr>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         {% endfor %}
 

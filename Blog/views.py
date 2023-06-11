@@ -1,11 +1,10 @@
 import os
-import re
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.core.paginator import Paginator
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from Blog.models import Post, Comment, User, Category
@@ -179,6 +178,13 @@ class LogoutView(LogoutView_de):
             return redirect(reverse_lazy('index'))
 
 
+def get_children(comment):
+    children = Comment.objects.filter(post_id=comment.post_id, root_id=comment.comment_id).order_by("created_at")
+    for child in children:
+        child.children = get_children(child)
+    return children
+
+
 def post_detail(request, pk):
     # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
     post = get_object_or_404(Post, pk=pk)
@@ -199,14 +205,17 @@ def post_detail(request, pk):
                 user = User.objects.get(pk=user_id)
                 parent_id = request.POST.get("parent_id")
                 root_id = request.POST.get("root_id")
-                index = Comment.objects.filter(post_id=post).count()
+                old_index = Comment.objects.filter(post_id=post).count()
                 username = user.username
                 # 如果有父评论，则设置reply_to为父评论的username，否则为空
                 if parent_id:
                     reply_to = Comment.objects.get(comment_id=parent_id).username
                 else:
                     reply_to = None
-
+                if parent_id or root_id:
+                    new_index = None
+                else:
+                    new_index = old_index + 1
                 comment = Comment(
                     user_id=user,
                     username=username,
@@ -217,7 +226,7 @@ def post_detail(request, pk):
                     email=email,
                     status="approved",
                     is_top=False,
-                    index=index + 1,
+                    index=new_index,
                     reply_to=reply_to,
                 )
                 comment.save()
@@ -225,14 +234,11 @@ def post_detail(request, pk):
                 error_msg = "请输入评论！"
 
         comments = Comment.objects.filter(post_id=post.pk, parent_id=None).order_by("created_at")
+        for comment in comments:
+            comment.children = get_children(comment)
 
     else:
         error_msg = "请先登录后再评论！"
-
-    # for comment in comments:
-    #     children_comments = Comment.objects.filter(post_id=post.pk, root_id=comment.index)
-    #     if children_comments:
-    #         comment.children.set(children_comments)
 
     # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
     paginator = Paginator(comments, per_page=10, orphans=True)
@@ -244,7 +250,8 @@ def post_detail(request, pk):
     # 调用Paginator对象的get_page()方法获取对应得Page对象
     # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
     page_obj = paginator.get_page(page_num)
-    return render(request, "blog/post.html", {"post": post, "page_obj": page_obj, "error_msg": error_msg})
+    return render(request, "blog/post.html",
+                  {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
 
 
 def index(request):

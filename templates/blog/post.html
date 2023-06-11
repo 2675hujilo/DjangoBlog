@@ -2,11 +2,12 @@
 {% load static %}
 {% block content %}
     <main class="page blog-post">
-        <section class="clean-block clean-post dark"  id="back-image-all" style="background-image:url(#);">
+        <section class="clean-block clean-post dark" id="back-image-all" style="background-image:url(#);">
 
             <div class="container">
                 <div class="back-image-all">
-                    <div class="post-image" id="post-top-image" style="background-image:url(/static/images/pic/pic_01.png);"></div>
+                    <div class="post-image" id="post-top-image"
+                         style="background-image:url(/static/images/pic/pic_01.png);"></div>
                     <script type="text/javascript">
                         function getRandomInt(min, max) {
                             return Math.floor(Math.random() * (max - min)) + min;
@@ -16,20 +17,24 @@
                         var heroSection = document.getElementById("post-top-image");
                         heroSection.style.backgroundImage = "url('/static/images/pic/pic_0" + randomIndex + ".png')";
                     </script>
-                    <div class="post-body" id="back-image-all"  >
+                    <div class="post-body" id="back-image-all">
                         <h3>{{ post.title }}</h3>
-                        <div class="post-info"><span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span></div>
+                        <div class="post-info">
+                            <span>{{ user.username }}</span><span>{{ post.published_at|date:"Y-m-d H:i:s" }}</span>
+                        </div>
                         <p>{{ post.content|safe }}</p>
                         {% for comment in page_obj %}
                             <div class="parent-comment">
                                 <b>{{ comment.index }}楼</b><br>
                                 <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}
-                                {{ comment.content|safe }}<br><hr>
+                                {{ comment.content|safe }}<br>
+                                <hr>
                                 {% if comment.children.exists %}
                                     {% for child_comment in comment.children.all %}
                                         <div class="parent-comment">
                                             <i>{{ child_comment.username }}</i>回复<b>{{ comment.username }}</b>：
-                                            {{ child_comment.content|safe }}<br><hr>
+                                            {{ child_comment.content|safe }}<br>
+                                            <hr>
                                         </div>
                                     {% endfor %}
                                 {% endif %}
@@ -53,6 +58,31 @@
                                 <p style="color: red" class="alert alert-danger">{{ error_msg }}</p>
                             {% endif %}
                         </form>
+                        <!-- 分页 -->
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ page_obj.previous_page_number }}">前一页</a>
+                                    </li>
+                                {% endif %}
+
+                                {% for i in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <li class="page-item active"><a class="page-link" href="#">{{ i }}<span
+                                                class="sr-only">(current)</span></a></li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ page_obj.next_page_number }}">后一页</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>

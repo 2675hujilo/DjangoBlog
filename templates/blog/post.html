@@ -32,9 +32,8 @@
                                 {% if comment.children.exists %}
                                     {% for child_comment in comment.children.all %}
                                         <div class="parent-comment">
-                                            <i>{{ child_comment.username }}</i>回复<b>{{ comment.username }}:</b>：
+                                            <b>{{ child_comment.username }}</b>回复<b>{{ child_comment.reply_to }}:</b>
                                             {{ child_comment.content|safe }}<br>
-                                            <hr>
                                         </div>
                                     {% endfor %}
                                 {% endif %}

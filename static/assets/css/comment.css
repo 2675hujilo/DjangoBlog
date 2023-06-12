@@ -30,3 +30,35 @@
     border: none;
     background-color: transparent;
 }
+
+
+.comment-pending {
+    color: #666; /* 默认字体颜色为灰色 */
+    background: none; /* 背景颜色为透明 */
+    border: none;
+}
+
+
+
+/* 取消文字选中状态 */
+.comment-pending ::selection {
+    background-color: transparent;
+}
+
+.comment-pending ::-moz-selection {
+    background-color: transparent;
+}
+
+/* 将所有表单元素的边框样式设置为none */
+.comment-pending input,
+.comment-pending textarea,
+.comment-pending select {
+    border-style: none;
+    outline: none;
+}
+
+/* 去除按钮默认样式（可选）*/
+.comment-pending button {
+    border: none;
+    background-color: transparent;
+}

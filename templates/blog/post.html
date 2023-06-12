@@ -27,7 +27,7 @@
                             <div class="parent-comment">
                                 <hr>
                                 <b>{{ comment.index }}楼</b><br>
-                                <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}<button class="reply-btn comment-children" style="border: none;">回复</button><p></p>
+                                <b>{{ comment.username }}</b>发布于{{ comment.created_at|date:"Y-m-d H:i:s" }}{% if comment.status == 'pending' %}<span  class="comment-pending">   审核中</span>{% else %}<button class="reply-btn comment-children" style="border: none;">回复</button>{% endif %}<p></p>
                                 {{ comment.content|safe }}<br>
 
                                 <!-- 添加回复文本输入表单 -->
@@ -39,7 +39,7 @@
                                     <input type="hidden" name="root_id" value="{{ comment.comment_id }}">
                                     <input type="hidden" name="reply_to" value="
                                             {% if comment.reply_to %}{{ comment.reply_to }}{% else %}{{ comment.username }}{% endif %}">
-                                    <button type="submit" class="comment-children" style="border: none;">回复ri</button>
+                                    <button type="submit" class="comment-children" style="border: none;">提交</button>
                                 </form>
 
                                 {% if comment.children.exists %}
@@ -50,7 +50,8 @@
 
 
                                             <!-- 添加回复按钮 -->
-                                            <button class="comment-children" style="border: none;" onclick="$(this).closest('.parent-comment').find('.reply-form').toggle()">回复</button><br>
+                                        {% if child_comment.status == 'pending' %}<span  class="comment-pending">   审核中</span>{% else %}<button class="comment-children" style="border: none;" onclick="$(this).closest('.parent-comment').find('.reply-form').toggle()">回复</button><br>{% endif %}
+
 
                                             <!-- 添加回复文本输入表单 -->
                                             <form method="post" style="display:none;" class="reply-form">

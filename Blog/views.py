@@ -4,9 +4,11 @@ from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+
 from Blog.models import Post, Comment, User, Category
 
 
@@ -170,10 +172,12 @@ class LogoutView(LogoutView_de):
             return redirect(reverse_lazy('index'))
 
 
-def get_children(comment):
-    children = Comment.objects.filter(post_id=comment.post_id, root_id=comment.comment_id).order_by("created_at")
+def get_children(request, comment):
+    children = Comment.objects.filter(Q(post_id=comment.post_id) & Q(root_id=comment.comment_id) & (
+                Q(status="approved") | Q(user_id=request.user.pk))).order_by(
+        "created_at")
     for child in children:
-        child.children = get_children(child)
+        child.children = get_children(request, child)
     return children
 
 
@@ -189,9 +193,14 @@ def post_detail(request, pk):
 
     error_msg = None
     comments = None
+
     # 检查用户是否登录，若未登录，则提示请登录；若已登录，则执行下面操作。
     if request.user.is_authenticated:
         if request.method == "POST":
+            status = "pending"
+            # 管理员默认通过审核
+            if request.user.is_superuser:
+                status = "approved"
             content = request.POST.get("content")
             if content:
                 user_id = request.user.pk
@@ -221,7 +230,7 @@ def post_detail(request, pk):
                     root_id=root_id,
                     content=content,
                     email=email,
-                    status="approved",
+                    status=status,
                     is_top=False,
                     index=new_index,
                     reply_to=reply_to,
@@ -230,9 +239,12 @@ def post_detail(request, pk):
             else:
                 error_msg = "请输入评论！"
 
-        comments = Comment.objects.filter(post_id=post.pk, root_id=None).order_by("created_at")
+        comments = Comment.objects.filter(
+            Q(post_id=post.pk) & (Q(status="approved") | Q(user_id=request.user.pk)),
+            root_id=None
+        ).order_by("created_at")
         for comment in comments:
-            comment.children = get_children(comment)
+            comment.children = get_children(request, comment)
 
     else:
         error_msg = "请先登录后再评论！"

@@ -66,17 +66,24 @@ class AccessLogMiddleware(MiddlewareMixin):
         self.post_title = None
         self.post_id = None
         self.session_id = None
+        self.status_code = None
+        self.view_args = None
+        self.view_kwargs = None
 
-    def handle_request(self, request, view_func, view_args, view_kwargs):
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        self.view_func = view_func.__name__
+        self.view_args = view_args
+        self.view_kwargs = view_kwargs
+        # 从请求中获取用户信息和文章信息
+        if request.user.is_authenticated:
+            self.user_id = request.user.user_id
+            self.username = request.user.username
+        self.session_id = request.session.session_key
+        self.post_id = get_post_id(request)
+        self.post_title = get_post_title(self.post_id)
+
+    def process_response(self, request, response):
         try:
-            # 从请求中获取用户信息和文章信息
-            if request.user.is_authenticated:
-                self.user_id = request.user.user_id
-                self.username = request.user.username
-            self.session_id = request.session.session_key
-            self.post_id = get_post_id(request)
-            self.post_title = get_post_title(self.post_id) if self.post_id else None
-
             # 记录访问日志
             access_record = AccessLog(
                 user_id=self.user_id,
@@ -92,13 +99,13 @@ class AccessLogMiddleware(MiddlewareMixin):
                 referer=request.META.get('HTTP_REFERER', ''),
                 request_url=request.build_absolute_uri(),
                 http_method=request.method,
-                body=request.body,
+                body=request.read(),
                 content_type=request.content_type,
                 user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
-                status_code=self.view_func(request, *view_args, **view_kwargs).status_code,
-                view_func=view_func.__name__,
-                view_args=view_args,
-                view_kwargs=view_kwargs,
+                status_code=response.status_code,
+                view_func=self.view_func,
+                view_args=self.view_func,
+                view_kwargs=self.view_func,
                 http_protocol=request.scheme,
                 port_number=request.META.get('SERVER_PORT'),
             )
@@ -108,12 +115,4 @@ class AccessLogMiddleware(MiddlewareMixin):
 
         except SuspiciousOperation as err:
             logger.warning(str(err))
-
-    def process_view(self, request, view_func, view_args, view_kwargs):
-        self.view_func = view_func
-        self.handle_request(request, view_func, view_args, view_kwargs)
-        return None
-
-    def process_exception(self, request, exception):
-        self.handle_request(request, self.view_func, (), {})
-        raise exception(status=500)
+        return response

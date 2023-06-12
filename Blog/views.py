@@ -4,7 +4,7 @@ from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.core.paginator import Paginator
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from Blog.models import Post, Comment, User, Category
@@ -180,7 +180,9 @@ def get_children(comment):
 def post_detail(request, pk):
     # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
     post = get_object_or_404(Post, pk=pk)
-
+    # 如果帖子未公开
+    if post.status != "published":
+        return HttpResponse(status=404)
     # 更新文章的浏览量
     post.views += 1
     post.save()
@@ -251,7 +253,7 @@ def post_detail(request, pk):
 
 def index(request):
     # 获取所有文章
-    posts = Post.objects.all().order_by("-updated_at")
+    posts = Post.objects.filter(status="published").order_by("-updated_at")
     for post in posts:
         # 部分显示文章内容（前 200 个字符）
         post.content = post.content[:200]

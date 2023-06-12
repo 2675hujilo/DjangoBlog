@@ -352,29 +352,34 @@ def get_client_ip(request):
 class AccessLogMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
         super().__init__(get_response)
+        self.username = None
+        self.user_id = None
         self.post_title = None
         self.post_id = None
-        self.ip_address = None
 
     def handle_request(self, request):
+
+        # method = request.method
+        # url = request.build_absolute_uri()
+        # headers = request.headers
+        # body = request.body
+        #
+        # print(f"Method: {method}")
+        # print(f"URL: {url}")
+        # print(f"Headers: {headers}")
+        # print(f"Body: {body}")
         try:
-            self.ip_address = get_client_ip(request)
             if request.user.is_authenticated:
-                user_id = request.user.user_id
-                username = request.user.username
-            else:
-                user_id = None
-                username = None
+                self.user_id = request.user.user_id
+                self.username = request.user.username
             self.post_id = get_post_id(request)
             self.post_title = get_post_title(self.post_id) if self.post_id else None
-            body = request.body
-            content_type = request.content_type
             access_record = AccessLog(
-                user_id=user_id,
-                user_name=username,
+                user_id=self.user_id,
+                user_name=self.username,
                 post_id=self.post_id,
                 post_title=self.post_title,
-                ip_address=self.ip_address,
+                ip_address=get_client_ip(request),
                 platform_name=request.user_agent.os.family,
                 platform_version=request.user_agent.os.version_string,
                 browser_family=request.user_agent.browser.family,
@@ -382,8 +387,8 @@ class AccessLogMiddleware(MiddlewareMixin):
                 referer=request.META.get('HTTP_REFERER', ''),
                 request_url=request.build_absolute_uri(),
                 http_method=request.method,
-                body=body,
-                content_type=content_type,
+                body=request.body,
+                content_type= request.content_type,
                 user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
             )
 

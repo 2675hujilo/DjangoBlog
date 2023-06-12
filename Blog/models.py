@@ -143,7 +143,7 @@ class AccessLog(models.Model):
     body = models.TextField(null=True, blank=True, verbose_name="请求体")
     content_type = models.CharField(max_length=255, verbose_name='请求类型', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    response_code = models.IntegerField(null=True, blank=True, verbose_name='响应代码')
+    status_code = models.IntegerField(null=True, blank=True, verbose_name='响应代码')
     response_content_type = models.CharField(max_length=255, null=True, blank=True, verbose_name='响应内容类型')
     session_id = models.CharField(max_length=255, null=True, blank=True, verbose_name='会话ID')
     location = models.CharField(max_length=255, null=True, blank=True, verbose_name='位置信息')

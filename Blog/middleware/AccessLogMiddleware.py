@@ -1,8 +1,9 @@
 import logging
 import re
+
 from django.core.exceptions import SuspiciousOperation
 from django.utils.deprecation import MiddlewareMixin
-from django.http import HttpResponse
+
 from Blog.models import Post, AccessLog
 
 logger = logging.getLogger(__name__)
@@ -98,6 +99,8 @@ class AccessLogMiddleware(MiddlewareMixin):
                 view_func=view_func.__name__,
                 view_args=view_args,
                 view_kwargs=view_kwargs,
+                http_protocol=request.scheme,
+                port_number=request.META.get('SERVER_PORT'),
             )
 
             # 在数据库中保存访问记录
@@ -113,4 +116,4 @@ class AccessLogMiddleware(MiddlewareMixin):
 
     def process_exception(self, request, exception):
         self.handle_request(request, self.view_func, (), {})
-        raise HttpResponse(status=500)
+        raise exception(status=500)

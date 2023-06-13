@@ -34,7 +34,6 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-
 ### 开始运行：
  终端下执行:
 ```bash

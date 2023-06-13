@@ -41,7 +41,7 @@ python manage.py runserver
 
 https连接(自签名证书):
 ```bash
-python manage.py runserver_plus --cert server.crt
+python manage.py runserver_plus --cert server.crt 127.0.0.1:8000
 ```
 浏览器打开: https://127.0.0.1:8000/
 

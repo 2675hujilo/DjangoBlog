@@ -123,6 +123,7 @@ class AccessLogMiddleware(MiddlewareMixin):
                 request_end_time=end_time_str,
                 request_duration=duration_ms,
                 response_size=len(response.content),
+                http_version=request.META['SERVER_PROTOCOL'],
             )
 
             # 在数据库中保存访问记录

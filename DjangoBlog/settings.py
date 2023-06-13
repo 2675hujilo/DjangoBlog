@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'Blog.middleware.AccessLogMiddleware.AccessLogMiddleware',
+    'middleware.AccessLogMiddleware.AccessLogMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

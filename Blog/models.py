@@ -149,6 +149,10 @@ class AccessLog(models.Model):
     platform_version = models.CharField(max_length=50, null=True, verbose_name='操作系统版本')
     browser_family = models.CharField(max_length=50, null=True, verbose_name='浏览器品牌')
     browser_version = models.CharField(max_length=50, null=True, verbose_name='浏览器版本')
+    request_start_time = models.DateTimeField(max_length=50,null=True, blank=True, verbose_name="请求开始时间")
+    request_end_time = models.DateTimeField(max_length=50,null=True, blank=True, verbose_name="请求结束时间")
+    request_duration = models.IntegerField(null=True, blank=True, verbose_name="请求持续时长(秒)")
+    response_size = models.IntegerField(null=True, blank=True, verbose_name='响应数据大小')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
     class Meta:

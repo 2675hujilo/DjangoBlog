@@ -1,5 +1,7 @@
 import logging
 import re
+import time
+from datetime import datetime
 
 from django.core.exceptions import SuspiciousOperation
 from django.utils.deprecation import MiddlewareMixin
@@ -69,20 +71,29 @@ class AccessLogMiddleware(MiddlewareMixin):
         self.status_code = None
         self.view_args = None
         self.view_kwargs = None
+        self.request_start_time = None
+        self.request_end_time = None
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         self.view_func = view_func.__name__
         self.view_args = view_args
         self.view_kwargs = view_kwargs
         # 从请求中获取用户信息和文章信息
+
+    def process_request(self, request):
+        self.request_start_time = time.time()
+
+    def process_response(self, request, response):
+        self.request_end_time = time.time()
+        start_time_str = datetime.fromtimestamp(self.request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+        end_time_str = datetime.fromtimestamp(self.request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+        duration_ms = int((self.request_end_time - self.request_start_time) * 1000)
         if request.user.is_authenticated:
             self.user_id = request.user.user_id
             self.username = request.user.username
         self.session_id = request.session.session_key
         self.post_id = get_post_id(request)
         self.post_title = get_post_title(self.post_id)
-
-    def process_response(self, request, response):
         try:
             # 记录访问日志
             access_record = AccessLog(
@@ -108,6 +119,10 @@ class AccessLogMiddleware(MiddlewareMixin):
                 view_kwargs=self.view_func,
                 http_protocol=request.scheme,
                 port_number=request.META.get('SERVER_PORT'),
+                request_start_time=start_time_str,
+                request_end_time=end_time_str,
+                request_duration=duration_ms,
+                response_size=len(response.content),
             )
 
             # 在数据库中保存访问记录

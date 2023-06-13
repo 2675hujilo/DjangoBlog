@@ -1,8 +1,6 @@
 
 ## 运行
-
- 修改`djangoblog/setting.py` 修改数据库配置，如下所示：
-
+修改`djangoblog/setting.py` 修改数据库配置，如下所示：
 ```python
 DATABASES = {
     'default': {
@@ -29,15 +27,21 @@ python manage.py migrate
 ```
 
 ### 创建超级用户
- 终端下执行:
+终端下执行:
 ```bash
 python manage.py createsuperuser
 ```
 
 ### 开始运行：
- 终端下执行:
+http连接:
 ```bash
 python manage.py runserver
 ```
-
 浏览器打开: http://127.0.0.1:8000/
+
+https连接(自签名证书):
+```bash
+python manage.py runserver_plus --cert server.crt 127.0.0.1:8000
+```
+浏览器打开: https://127.0.0.1:8000/
+

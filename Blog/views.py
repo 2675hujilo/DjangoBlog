@@ -1,3 +1,4 @@
+import mimetypes
 import os
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
@@ -312,4 +313,12 @@ def new_post(request):
 
 def picture_view(request, path):
     image_path = os.path.join('/media/images/pic/', path)
-    return FileResponse(open(image_path, 'rb'), content_type='image/jpeg')
+
+    # 使用 mimetypes 模块来获取文件的 MIME 类型
+    content_type = mimetypes.guess_type(image_path)[0]
+
+    # 如果无法获取 MIME 类型，则默认使用 image/jpeg
+    if not content_type:
+        content_type = 'image/jpeg'
+
+    return FileResponse(open(image_path, 'rb'), content_type=content_type)

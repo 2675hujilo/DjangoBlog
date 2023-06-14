@@ -2,7 +2,7 @@ import logging
 import re
 import time
 from datetime import datetime
-
+from threading import local
 from django.core.exceptions import SuspiciousOperation
 from django.utils.deprecation import MiddlewareMixin
 
@@ -59,76 +59,74 @@ def get_client_ip(request):
     return ip_address
 
 
+_thread_locals = local()  # 线程本地存储
+
+
 class AccessLogMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
         super().__init__(get_response)
-        self.view_func = None
-        self.username = None
-        self.user_id = None
-        self.post_title = None
-        self.post_id = None
-        self.session_id = None
-        self.status_code = None
-        self.view_args = None
-        self.view_kwargs = None
-        self.request_start_time = None
-        self.request_end_time = None
-
-    def process_view(self, request, view_func, view_args, view_kwargs):
-        self.view_func = view_func.__name__
-        self.view_args = view_args
-        self.view_kwargs = view_kwargs
-        # 从请求中获取用户信息和文章信息
 
     def process_request(self, request):
-        self.request_start_time = time.time()
+        _thread_locals.request_start_time = time.time()
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        _thread_locals.view_func = view_func.__name__
+        _thread_locals.view_args = view_args
+        _thread_locals.view_kwargs = view_kwargs
 
     def process_response(self, request, response):
-        self.request_end_time = time.time()
-        start_time_str = datetime.fromtimestamp(self.request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
-        end_time_str = datetime.fromtimestamp(self.request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
-        duration_ms = int((self.request_end_time - self.request_start_time) * 1000)
-        if request.user.is_authenticated:
-            self.user_id = request.user.user_id
-            self.username = request.user.username
-        self.session_id = request.session.session_key
-        self.post_id = get_post_id(request)
-        self.post_title = get_post_title(self.post_id)
-        try:
-            # 记录访问日志
-            access_record = AccessLog(
-                user_id=self.user_id,
-                user_name=self.username,
-                post_id=self.post_id,
-                post_title=self.post_title,
-                session_id=self.session_id,
-                ip_address=get_client_ip(request),
-                platform_name=request.user_agent.os.family,
-                platform_version=request.user_agent.os.version_string,
-                browser_family=request.user_agent.browser.family,
-                browser_version=request.user_agent.browser.version_string,
-                referer=request.META.get('HTTP_REFERER', ''),
-                request_url=request.build_absolute_uri(),
-                http_method=request.method,
-                body=request.read(),
-                content_type=request.content_type,
-                user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
-                status_code=response.status_code,
-                view_func=self.view_func,
-                view_args=self.view_args,
-                view_kwargs=self.view_kwargs,
-                http_protocol=request.scheme,
-                port_number=request.META.get('SERVER_PORT'),
-                request_start_time=start_time_str,
-                request_end_time=end_time_str,
-                request_duration=duration_ms,
-                response_size=len(response.content),
-                http_version=request.META['SERVER_PROTOCOL'],
-            )
 
-            # 在数据库中保存访问记录
-            access_record.save()
+        if hasattr(_thread_locals, 'request_start_time'):
+            request_end_time = time.time()
+            request_start_time = getattr(_thread_locals, 'request_start_time', 0)
 
-        except SuspiciousOperation as err:
-            logger.warning(str(err))
+            start_time_str = datetime.fromtimestamp(request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+            end_time_str = datetime.fromtimestamp(request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+            duration_ms = int((request_end_time - request_start_time) * 1000)
+
+            if request.user.is_authenticated:
+                _thread_locals.user_id = request.user.user_id
+                _thread_locals.username = request.user.username
+
+            _thread_locals.session_id = request.session.session_key
+            _thread_locals.post_id = get_post_id(request)
+            _thread_locals.post_title = get_post_title(_thread_locals.post_id)
+
+            try:
+                # 记录访问日志
+                access_record = AccessLog(
+                    user_id=_thread_locals.user_id,
+                    user_name=_thread_locals.username,
+                    post_id=_thread_locals.post_id,
+                    post_title=_thread_locals.post_title,
+                    session_id=_thread_locals.session_id,
+                    ip_address=get_client_ip(request),
+                    platform_name=request.user_agent.os.family,
+                    platform_version=request.user_agent.os.version_string,
+                    browser_family=request.user_agent.browser.family,
+                    browser_version=request.user_agent.browser.version_string,
+                    referer=request.META.get('HTTP_REFERER', ''),
+                    request_url=request.build_absolute_uri(),
+                    http_method=request.method,
+                    body=request.read(),
+                    content_type=request.content_type,
+                    user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
+                    status_code=response.status_code,
+                    view_func=_thread_locals.view_func,
+                    view_args=_thread_locals.view_args,
+                    view_kwargs=_thread_locals.view_kwargs,
+                    http_protocol=request.scheme,
+                    port_number=request.META.get('SERVER_PORT'),
+                    request_start_time=start_time_str,
+                    request_end_time=end_time_str,
+                    request_duration=duration_ms,
+                    response_size=len(response.content),
+                    http_version=request.META['SERVER_PROTOCOL'],
+                )
+
+                # 在数据库中保存访问记录
+                access_record.save()
+
+            except SuspiciousOperation as err:
+                logger.warning(str(err))
         return response

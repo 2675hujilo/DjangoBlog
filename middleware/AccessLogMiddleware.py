@@ -87,6 +87,9 @@ class AccessLogMiddleware(MiddlewareMixin):
             if request.user.is_authenticated:
                 _thread_locals.user_id = request.user.user_id
                 _thread_locals.username = request.user.username
+            else:
+                _thread_locals.user_id = None
+                _thread_locals.username = None
 
             _thread_locals.session_id = request.session.session_key
             _thread_locals.post_id = get_post_id(request)

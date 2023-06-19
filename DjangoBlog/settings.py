@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -172,7 +173,7 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-MEDIA_URL = os.path.join('media/')  # 上传图片的路径
+MEDIA_URL = '/media/'  # 上传图片的路径
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # 上传图片的根路径
 
 CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/uploads/')  # 文件保存为止，因为上边配置了media， 图片将保存至media/uploads下

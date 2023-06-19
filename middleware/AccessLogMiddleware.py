@@ -94,14 +94,6 @@ class AccessLogMiddleware(MiddlewareMixin):
             _thread_locals.session_id = request.session.session_key
             _thread_locals.post_id = get_post_id(request)
             _thread_locals.post_title = get_post_title(_thread_locals.post_id)
-            response_size = 0
-            if response and hasattr(response, 'streaming_content'):
-                response_size = sum(len(chunk) for chunk in response.streaming_content)
-            elif response and hasattr(response, 'content'):
-                if isinstance(response.content, (bytes, bytearray)):
-                    response_size = len(response.content)
-                else:
-                    response_size = sum(len(chunk) for chunk in response.streaming_content)
             try:
                 # 记录访问日志
                 access_record = AccessLog(
@@ -130,7 +122,7 @@ class AccessLogMiddleware(MiddlewareMixin):
                     request_start_time=start_time_str,
                     request_end_time=end_time_str,
                     request_duration=duration_ms,
-                    response_size=response_size,
+                    response_size=response.get('Content-Length'),
                     http_version=request.META['SERVER_PROTOCOL'],
                 )
 

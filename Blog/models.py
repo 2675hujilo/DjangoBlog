@@ -227,3 +227,26 @@ class SiteInformation(models.Model):
     class Meta:
         db_table = 'siteinformation'
         verbose_name_plural = '网站信息'
+
+
+class SiteMenu(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, verbose_name='菜单名称')
+    url = models.CharField(max_length=200, verbose_name='URL地址')
+    menu_id = models.IntegerField(blank=True, null=True, verbose_name='根菜单id')
+
+    class Meta:
+        db_table = 'sitemenu'
+        verbose_name_plural = '网站菜单'
+
+
+class SiteLink(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, verbose_name='链接名称')
+    url = models.URLField(verbose_name='链接地址')
+    description = models.TextField(blank=True, null=True, verbose_name='链接描述')
+
+    class Meta:
+        db_table = 'sitelink'
+        verbose_name_plural = '网站友情链接'
+

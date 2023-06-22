@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="zh">
+<html lang="{{ request.siteinfos.first.language_default }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>月亮之下 - 我熬落霞一壶，饮星月一盏，披风雪一裳，织山川一卷。</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}">
+    {% if request.siteinfos.first.site_description %}
+        <title>{{ request.siteinfos.first.site_title }} - {{ request.siteinfos.first.site_description }}</title>
+    {% else %}
+        <title>{{ request.siteinfos.first.site_title }}</title>
+    {% endif %}
+    {% if request.siteinfos.first.site_avatar %}
+        <link rel="shortcut icon" type="image/x-icon" href="{% get_media_prefix %}{{ request.siteinfos.first.site_avatar }}">
+    {% else %}
+        <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}">
+    {% endif %}
     <link rel="stylesheet" href="{% static "assets/bootstrap/css/bootstrap.min.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/googleapis.css" %}">
     <link rel="stylesheet" href="{% static "assets/fonts/ionicons.min.css" %}">
@@ -85,7 +93,9 @@
             </li>
         {% endfor %}
     </ul>
-    <p class="copyright">Copy Right © 2023</p>
+    {% if request.siteinfos.first.page_footer_notice %}
+        <p class="copyright">{{ request.siteinfos.first.page_footer_notice }}</p>
+    {% endif %}
 </footer>
 <script defer src="{% static "assets/js/bg-image.js" %}"></script>
 <script defer src="{% static "assets/js/jquery.min.js" %}"></script>

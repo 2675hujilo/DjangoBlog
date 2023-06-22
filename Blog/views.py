@@ -93,7 +93,7 @@ class LogoutView(LogoutView_de):
 
 def get_children(request, comment):
     children = Comment.objects.filter(Q(post_id=comment.post_id) & Q(root_id=comment.comment_id) & (
-                Q(status="approved") | Q(user_id=request.user.pk))).order_by(
+            Q(status="approved") | Q(user_id=request.user.pk))).order_by(
         "created_at")
     for child in children:
         child.children = get_children(request, child)
@@ -112,7 +112,7 @@ def post_detail(request, pk):
 
     error_msg = None
     comments = None
-
+    page_obj = None
     # 检查用户是否登录，若未登录，则提示请登录；若已登录，则执行下面操作。
     if request.user.is_authenticated:
         if request.method == "POST":
@@ -162,22 +162,19 @@ def post_detail(request, pk):
             Q(post_id=post.pk) & (Q(status="approved") | Q(user_id=request.user.pk)),
             root_id=None
         ).order_by("created_at")
-        for comment in comments:
-            comment.children = get_children(request, comment)
-
+        if comments:
+            for comment in comments:
+                comment.children = get_children(request, comment)
+            # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
+            paginator = Paginator(comments, per_page=10, orphans=True)
+            # 获取当前请求中page参数的值（即所请求的页数）
+            # 如果request.GET中不存在page参数，默认为第一页
+            page_num = request.GET.get("page", 1)
+            # 调用Paginator对象的get_page()方法获取对应得Page对象
+            # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
+            page_obj = paginator.get_page(page_num)
     else:
         error_msg = "请先登录后再评论！"
-
-    # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
-    paginator = Paginator(comments, per_page=10, orphans=True)
-
-    # 获取当前请求中page参数的值（即所请求的页数）
-    # 如果request.GET中不存在page参数，默认为第一页
-    page_num = request.GET.get("page", 1)
-
-    # 调用Paginator对象的get_page()方法获取对应得Page对象
-    # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
-    page_obj = paginator.get_page(page_num)
     return render(request, "blog/post.html",
                   {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
 

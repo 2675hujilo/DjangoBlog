@@ -40,10 +40,10 @@
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-haspopup="true" aria-expanded="false">
                             {% if user.avatar %}
-                                <img src="/media/{{ user.avatar }}" class="avatar-img rounded-circle img-fluid"
+                                <img src="{% get_media_prefix %}{{ user.avatar }}" class="avatar-img rounded-circle img-fluid"
                                      height="30" width="30" alt="">
                             {% else %}
-                                <img src="/static/images/head.png" class="avatar-img rounded-circle img-fluid"
+                                <img src="{% static "images/head.png" %}" class="avatar-img rounded-circle img-fluid"
                                      height="30" width="30" alt="">
                             {% endif %}
                         </a>

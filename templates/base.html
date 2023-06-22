@@ -79,11 +79,11 @@
                 src="{% static "images/qzone.png" %}" alt=""></a>
     </div>
     <ul class="list-inline ">
-        <li class="list-inline-item"><a href="#">友情链接1</a></li>
-        <li class="list-inline-item"><a href="#">友情链接2</a></li>
-        <li class="list-inline-item"><a href="#">友情链接3</a></li>
-        <li class="list-inline-item"><a href="#">友情链接4</a></li>
-        <li class="list-inline-item"><a href="#">友情链接5</a></li>
+        {% for link in request.sitelinks %}
+            <li class="list-inline-item">
+                <a href="{{ link.url }}">{{ link.name }}</a>
+            </li>
+        {% endfor %}
     </ul>
     <p class="copyright">Copy Right © 2023</p>
 </footer>

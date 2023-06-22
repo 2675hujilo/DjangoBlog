@@ -128,7 +128,7 @@ class Comment(models.Model):
 class AccessLog(models.Model):
     access_id = models.AutoField(primary_key=True)
     user_id = models.IntegerField(null=True, blank=True, verbose_name='用户ID')
-    user_name = models.CharField(max_length=50, verbose_name='用户名', null=True, blank=True)
+    user_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='用户名')
     post_id = models.IntegerField(null=True, blank=True, verbose_name='访问文章ID')
     post_title = models.CharField(max_length=255, null=True, blank=True, verbose_name='访问文章标题')
     ip_address = models.CharField(max_length=100, verbose_name='IP地址')
@@ -181,3 +181,49 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+
+
+class SiteInformation(models.Model):
+    LANG_CHOICES = (
+        ('zh', '中文'),
+        ('en', 'English'),
+    )
+    site_title = models.CharField(max_length=200, verbose_name='网站标题')
+    site_description = models.TextField(null=True, blank=True, verbose_name='网站描述')
+    site_avatar = models.ImageField(null=True, blank=True, verbose_name='网站头像')
+    slideshow_images = models.ImageField(null=True, blank=True, verbose_name='首页轮播图')
+    language_default = models.CharField(max_length=2, choices=LANG_CHOICES, default='zh', verbose_name='网站默认语言')
+    enable_comments = models.BooleanField(default=True, verbose_name='启用评论系统')
+    site_menu = models.CharField(max_length=200, null=True, blank=True,  verbose_name='菜单')
+    site_submenu = models.CharField(max_length=200, null=True, blank=True,  verbose_name='子菜单')
+    site_links = models.TextField(null=True, blank=True, verbose_name='友情链接')
+    class_category = models.CharField(max_length=100, null=True, blank=True, verbose_name='文章分类')
+    tag_choice = models.CharField(max_length=128, null=True, blank=True,  verbose_name="标签")
+    seo_title = models.CharField(max_length=200,null=True, blank=True,  verbose_name='页面标题 SEO')
+    seo_keywords = models.CharField(max_length=200, null=True, blank=True, verbose_name='meta关键词 SEO')
+    seo_description = models.TextField(null=True, blank=True, verbose_name='meta描述 SEO')
+    about_me = models.TextField(null=True, blank=True, verbose_name='博主介绍')
+    page_footer_notice = models.TextField(null=True, blank=True, verbose_name='页面底部版权声明')
+    mobile_friendly_design = models.BooleanField(default=True, null=True, blank=True, verbose_name='针对移动设备的响应式设计')
+    website_skin_settings = models.ImageField(upload_to='theme', null=True, blank=True, verbose_name='网站主题/皮肤设置')
+    social_media_links_weibo = models.URLField(max_length=200, null=True, blank=True, verbose_name='微博账号链接')
+    social_media_links_wechat = models.ImageField(upload_to='wechat_qrcode', null=True, blank=True,verbose_name='微信公众号二维码')
+    code_highlighting_tool = models.CharField(max_length=30, null=True, blank=True, default="highlight.js", verbose_name='代码高亮工具')
+    comment_system_plugin = models.CharField(max_length=30, null=True, blank=True, default="Disqus", verbose_name="评论插件")
+    article_archive_tree = models.TextField(max_length=30, null=True, blank=True, default="按照文章发表时间进行归档显示",verbose_name="文章归档")
+    lazy_load_tool = models.ImageField(max_length=30, blank=True, null=True, verbose_name='Lazy Load组件')
+    backup_database_tool = models.BooleanField(default=True, verbose_name='数据库备份与恢复')
+    google_analytics_integration = models.BooleanField(default=True, verbose_name='Google Analytics集成')
+    publish_interval_limit = models.PositiveIntegerField(default=10, verbose_name='发布时间间隔限制(分钟)')
+    rss_feed_link = models.URLField(max_length=200, blank=True, null=True, verbose_name='RSS feed链接')
+    subdomain_binding = models.BooleanField(default=False,null=True, blank=True,  verbose_name='二级域名绑定')
+    blog_update_email_notification = models.EmailField(null=True, blank=True, verbose_name='博客更新提醒邮件')
+    ssl_certificate = models.BooleanField(default=True,null=True, blank=True,  verbose_name='SSL证书')
+    watermark_setting = models.ImageField(upload_to='watermarks',null=True, blank=True,  verbose_name='水印设置')
+    site_icp_number = models.CharField(max_length=100, blank=True, null=True, verbose_name='网站备案信息')
+    online_customer_service_system = models.URLField(max_length=200, blank=True, null=True,verbose_name='在线客服系统链接')
+    website_access_statistics = models.TextField(blank=True, null=True, verbose_name='网站访问统计')
+
+    class Meta:
+        db_table = 'siteinformation'
+        verbose_name_plural = '网站信息'

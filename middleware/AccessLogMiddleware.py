@@ -80,9 +80,9 @@ class AccessLogMiddleware(MiddlewareMixin):
             request_end_time = time.time()
             request_start_time = getattr(_thread_locals, 'request_start_time', 0)
 
-            start_time_str = datetime.fromtimestamp(request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
-            end_time_str = datetime.fromtimestamp(request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
-            duration_ms = int((request_end_time - request_start_time) * 1000)
+            _thread_locals.start_time_str = datetime.fromtimestamp(request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+            _thread_locals.end_time_str = datetime.fromtimestamp(request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+            _thread_locals.duration_ms = int((request_end_time - request_start_time) * 1000)
 
             if request.user.is_authenticated:
                 _thread_locals.user_id = request.user.user_id
@@ -91,7 +91,6 @@ class AccessLogMiddleware(MiddlewareMixin):
                 _thread_locals.user_id = None
                 _thread_locals.username = None
 
-            _thread_locals.session_id = request.session.session_key
             _thread_locals.post_id = get_post_id(request)
             _thread_locals.post_title = get_post_title(_thread_locals.post_id)
             try:
@@ -101,7 +100,7 @@ class AccessLogMiddleware(MiddlewareMixin):
                     user_name=_thread_locals.username,
                     post_id=_thread_locals.post_id,
                     post_title=_thread_locals.post_title,
-                    session_id=_thread_locals.session_id,
+                    session_id=request.session.session_key,
                     ip_address=get_client_ip(request),
                     platform_name=request.user_agent.os.family,
                     platform_version=request.user_agent.os.version_string,
@@ -119,9 +118,9 @@ class AccessLogMiddleware(MiddlewareMixin):
                     view_kwargs=_thread_locals.view_kwargs,
                     http_protocol=request.scheme,
                     port_number=request.META.get('SERVER_PORT'),
-                    request_start_time=start_time_str,
-                    request_end_time=end_time_str,
-                    request_duration=duration_ms,
+                    request_start_time=_thread_locals.start_time_str,
+                    request_end_time=_thread_locals.end_time_str,
+                    request_duration=_thread_locals.duration_ms,
                     response_size=response.get('Content-Length'),
                     http_version=request.META['SERVER_PROTOCOL'],
                 )

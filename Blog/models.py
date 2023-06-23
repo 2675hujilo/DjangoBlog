@@ -233,7 +233,7 @@ class SiteInfo(models.Model):
     website_access_statistics = models.TextField(blank=True, null=True, verbose_name='网站访问统计')
 
     class Meta:
-        db_table = 'siteinfo'
+        db_table = 'site_info'
         verbose_name_plural = '网站信息'
 
 
@@ -244,13 +244,13 @@ class SiteMenu(models.Model):
     menu_root_id = models.IntegerField(blank=True, null=True, verbose_name='根菜单id')
 
     class Meta:
-        db_table = 'sitemenu'
+        db_table = 'site_menu'
         verbose_name_plural = '网站菜单'
 
 
 class SiteLink(models.Model):
     link_id = models.AutoField(primary_key=True)
-    link_name = models.CharField( max_length=100, verbose_name='链接名称')
+    link_name = models.CharField(max_length=100, verbose_name='链接名称')
     link_url = models.URLField(blank=True, null=True, verbose_name='链接地址')
     link_img_url = models.ImageField(blank=True, null=True, verbose_name='图片地址')
     description = models.TextField(blank=True, null=True, verbose_name='链接描述')
@@ -262,9 +262,8 @@ class SiteLink(models.Model):
 
     ]
     link_type = models.TextField(max_length=30, choices=LINK_CHOICES, verbose_name='链接类型')
+    link_order = models.IntegerField(null=True, blank=True, default=1, verbose_name='链接顺序')
+
     class Meta:
-        db_table = 'sitelink'
-        verbose_name_plural = '网站友情链接'
-
-
-
+        db_table = 'site_link'
+        verbose_name_plural = '网站链接'

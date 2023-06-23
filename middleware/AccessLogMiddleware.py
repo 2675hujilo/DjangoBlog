@@ -70,9 +70,9 @@ class AccessLogMiddleware(MiddlewareMixin):
         _thread_locals.request_start_time = time.time()
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        _thread_locals.view_func = view_func.__name__
-        _thread_locals.view_args = view_args
-        _thread_locals.view_kwargs = view_kwargs
+        _thread_locals.view_func = view_func.__name__ if view_func else None
+        _thread_locals.view_args = view_args if view_args else None
+        _thread_locals.view_kwargs = view_kwargs if view_kwargs else None
 
     def process_response(self, request, response):
 

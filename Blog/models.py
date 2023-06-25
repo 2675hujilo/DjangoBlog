@@ -57,11 +57,6 @@ class Category(models.Model):
     category_id = models.AutoField(primary_key=True, verbose_name='分类ID')
     name = models.CharField(max_length=255, verbose_name='分类名')
     description = models.TextField(null=True, blank=True, verbose_name='分类介绍')
-    parent = models.ForeignKey(
-        "self", null=True, blank=True, on_delete=models.CASCADE,
-        related_name="children", verbose_name='父级分类'
-    )
-
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
@@ -239,9 +234,17 @@ class SiteInfo(models.Model):
 
 class SiteMenu(models.Model):
     menu_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, verbose_name='菜单名称')
-    url = models.CharField(max_length=200, verbose_name='URL地址')
+    name = models.CharField(max_length=20, verbose_name='菜单名称')
+    url = models.CharField(max_length=10, verbose_name='URL地址')
     menu_root_id = models.IntegerField(blank=True, null=True, verbose_name='根菜单id')
+    LEVEL_CHOICES = (
+        ('all', '所有人可见'),
+        ('guest', '仅游客可见'),
+        ('login', '仅已登录用户可见'),
+        ('admin', '仅管理员可见'),
+    )
+    menu_level = models.CharField(max_length=20, default='all', choices=LEVEL_CHOICES, verbose_name='权限等级')
+    menu_order = models.IntegerField(default=1, verbose_name='菜单排序')
 
     class Meta:
         db_table = 'site_menu'
@@ -262,7 +265,7 @@ class SiteLink(models.Model):
 
     ]
     link_type = models.TextField(max_length=30, choices=LINK_CHOICES, verbose_name='链接类型')
-    link_order = models.IntegerField(null=True, blank=True, default=1, verbose_name='链接顺序')
+    link_order = models.IntegerField(default=1, verbose_name='链接顺序')
 
     class Meta:
         db_table = 'site_link'

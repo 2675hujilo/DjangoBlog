@@ -31,18 +31,17 @@
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
-                       aria-haspopup="true" aria-expanded="false">页面菜单</a>
-                    <div class="dropdown-menu bg-touming">
-                        <a class="dropdown-item" href="{% url 'new_post' %}">发帖</a>
-                        <a class="dropdown-item" href="{% url 'index' %}">页面2</a>
-                        <a class="dropdown-item" href="{% url 'index' %}">页面3</a>
-                        <a class="dropdown-item" href="{% url 'index' %}">页面4</a>
-                        <a class="dropdown-item" href="{% url 'index' %}">页面5</a>
-                    </div>
-                </li>
-
+                {% if request.site_categories %}
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">分类</a>
+                        <div class="dropdown-menu bg-touming">
+                            {% for category in request.site_categories %}
+                            <a class="dropdown-item" href="{% url 'index' category.category_id  %}">{{ category.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                {% endif %}
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"

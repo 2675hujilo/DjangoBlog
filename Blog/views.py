@@ -179,9 +179,12 @@ def post_detail(request, pk):
                   {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
 
 
-def index(request):
-    # 获取所有文章
-    posts = Post.objects.filter(status="published").order_by("-updated_at")
+def index(request, pk=None):
+    if pk:
+        posts = Post.objects.filter(categories__category_id=pk)
+    else:
+        # 获取所有文章
+        posts = Post.objects.filter(status="published").order_by("-updated_at")
     for post in posts:
         # 部分显示文章内容（前 200 个字符）
         post.content = post.content[:200]

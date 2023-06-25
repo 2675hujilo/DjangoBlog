@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="{% static "assets/css/smoothproducts.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/bg-image.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/comment.css" %}">
+    {% if request.siteinfos.first.website_access_statistics %}
+            {{ request.siteinfos.first.website_access_statistics|safe }}
+    {% endif %}
 </head>
 
 <body>

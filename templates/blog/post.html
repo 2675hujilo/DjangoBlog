@@ -34,7 +34,7 @@
                                 {% else %}
                                     <button class="reply-btn comment-children" style="border: none;">回复</button>
                                 {% endif %}<br>
-                                {{ comment.content|safe }}<br>
+                                {{ comment.content }}<br>
 
                                 <!-- 根评论回复文本输入表单 -->
                                 <form method="post" style="display:none;" class="reply-form">
@@ -58,7 +58,7 @@
                                     {% for child_comment in comment.children.all %}
                                         <div class="parent-comment">
                                             <b>{{ child_comment.username }}</b> 回复
-                                            <b>{{ child_comment.reply_to }}:</b>{{ child_comment.content|safe }}
+                                            <b>{{ child_comment.reply_to }}:</b>{{ child_comment.content }}
                                             <!-- 子评论回复按钮 -->
                                         {% if child_comment.status == 'pending' %}
                                             <span  class="comment-pending">   审核中</span>
@@ -95,21 +95,19 @@
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="editor">发布评论</label>
-                                <textarea name="content" id="editor" rows="10"></textarea></div>
+                                <label>
+                                    <input name="content"></input>
+                                </label>
+                            </div>
                             <script src="{% static "assets/js/jquery-3.2.1.min.js" %}"></script>
-                            <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
-                            <script src="{% static 'ckeditor/adapters/jquery.js' %}"></script>
+                            <button class="btn btn-primary btn-block" type="submit">发布</button>
                             <script type="text/javascript">
-                                CKEDITOR.replace('editor', {
-                                    filebrowserUploadUrl: '/media/uploads/',
-                                });
                                 $(document).ready(function () {
                                     $("#show-comment-form-btn").click(function () {
                                         $("#comment-form").toggle();
                                     });
                                 });
                             </script>
-                            <button class="btn btn-primary btn-block" type="submit">发布</button>
                             {% if error_msg %}
                                 <p style="color: red" class="alert alert-danger">{{ error_msg }}</p>
                             {% endif %}

@@ -105,7 +105,7 @@ class Comment(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='评论文章')  # 外键关联到 article 表
     parent_id = models.IntegerField(null=True, blank=True, verbose_name='父评论ID')
     root_id = models.IntegerField(null=True, blank=True, verbose_name='根评论ID')
-    content = RichTextUploadingField(verbose_name='评论内容')
+    content = RichTextUploadingField(config_name='default', verbose_name='评论内容')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     index = models.IntegerField(null=True, blank=True, verbose_name="楼层")
     likes = models.IntegerField(default=0, verbose_name='点赞数')
@@ -123,6 +123,12 @@ class Comment(models.Model):
     class Meta:
         db_table = 'comment'
         verbose_name_plural = '评论'
+
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
 
 
 class AccessLog(models.Model):
@@ -175,12 +181,6 @@ class AccessLog(models.Model):
     @property
     def os(self):
         return str(self.user_agent.os)
-
-
-class NoteForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content']
 
 
 class SiteInfo(models.Model):

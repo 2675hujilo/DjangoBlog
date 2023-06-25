@@ -12,8 +12,9 @@ class SiteInfoMiddleware:
         request.user_links = links.filter(link_type='user')
         request.footer_links = links.filter(link_type='footer')
         # 网站信息
-        site_infos = SiteInfo.objects.all()
-        request.site_infos = site_infos
+        site_infos = SiteInfo.objects.filter(level=True)
+        if site_infos:
+            request.site_infos = site_infos[0]
         # 菜单
         site_menus = SiteMenu.objects.all()
         request.site_menus = site_menus

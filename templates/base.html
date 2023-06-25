@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="{{ request.siteinfos.first.language_default }}">
+<html lang="{{ request.site_infos.language_default }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    {% if request.siteinfos.first.site_description %}
-        <title>{{ request.siteinfos.first.site_title }} - {{ request.siteinfos.first.site_description }}</title>
+    {% if request.site_infos.site_description %}
+        <title>{{ request.site_infos.site_title }} - {{ request.site_infos.site_description }}</title>
     {% else %}
-        <title>{{ request.siteinfos.first.site_title }}</title>
+        <title>{{ request.site_infos.site_title }}</title>
     {% endif %}
-    {% if request.siteinfos.first.site_avatar %}
-        <link rel="shortcut icon" type="image/x-icon" href="{% get_media_prefix %}{{ request.siteinfos.first.site_avatar }}">
+    {% if request.site_infos.site_avatar %}
+        <link rel="shortcut icon" type="image/x-icon" href="{% get_media_prefix %}{{ request.site_infos.site_avatar }}">
     {% else %}
         <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}">
     {% endif %}
@@ -22,14 +22,14 @@
     <link rel="stylesheet" href="{% static "assets/css/smoothproducts.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/bg-image.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/comment.css" %}">
-    {% if request.siteinfos.first.website_access_statistics %}
-            {{ request.siteinfos.first.website_access_statistics|safe }}
+    {% if request.site_infos.website_access_statistics %}
+            {{ request.site_infos.website_access_statistics|safe }}
     {% endif %}
 </head>
 
 <body>
 <nav class="navbar navbar-light navbar-expand-lg fixed-top clean-navbar bg-touming">
-    <div class="container"><a class="navbar-brand logo" href="/index/">{{ request.siteinfos.first.site_title }}</a>
+    <div class="container"><a class="navbar-brand logo" href="/index/">{{ request.site_infos.site_title }}</a>
         <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">

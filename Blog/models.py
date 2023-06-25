@@ -226,6 +226,7 @@ class SiteInfo(models.Model):
     online_customer_service_system = models.URLField(max_length=200, blank=True, null=True,
                                                      verbose_name='在线客服系统链接')
     website_access_statistics = models.TextField(blank=True, null=True, verbose_name='网站访问统计')
+    level = models.BooleanField(default=True, verbose_name='启用')
 
     class Meta:
         db_table = 'site_info'

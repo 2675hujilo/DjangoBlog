@@ -90,8 +90,6 @@ class AccessLogMiddleware(MiddlewareMixin):
                     _thread_locals.user_id = request.user.user_id
                     _thread_locals.username = request.user.username
 
-
-
             _thread_locals.post_id = get_post_id(request)
             _thread_locals.post_title = get_post_title(_thread_locals.post_id)
             try:
@@ -114,9 +112,9 @@ class AccessLogMiddleware(MiddlewareMixin):
                     content_type=request.content_type,
                     user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
                     status_code=response.status_code,
-                    view_func=_thread_locals.view_func,
-                    view_args=_thread_locals.view_args,
-                    view_kwargs=_thread_locals.view_kwargs,
+                    view_func=getattr(_thread_locals, 'view_func', None),
+                    view_args=getattr(_thread_locals, 'view_args', None),
+                    view_kwargs=getattr(_thread_locals, 'view_kwargs', None),
                     http_protocol=request.scheme,
                     port_number=request.META.get('SERVER_PORT'),
                     request_start_time=_thread_locals.start_time_str,

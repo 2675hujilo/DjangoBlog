@@ -71,12 +71,12 @@
   backdrop-filter: blur(10px);
   white-space: pre-wrap;
   border-style: solid; /* 边框样式 */
-  border-width: 1px; /* 边框宽度 */
   border-color: skyblue; /* 边框颜色 */
 }
-.comment-input :focus {
+.comment-input:focus {
   outline: none;
-  border-color: skyblue; /* 文本框获取焦点时，将边框颜色设置为透明 */
+  border-width: 1px; /* 边框宽度 */
+  border-color: #27b4fa; /* 文本框获取焦点时，将边框颜色设置为透明 */
 }
 
 .login-input{

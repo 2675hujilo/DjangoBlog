@@ -66,15 +66,18 @@ class AccessLogMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
         super().__init__(get_response)
 
-    def process_request(self, request):
+    @staticmethod
+    def process_request(request):
         _thread_locals.request_start_time = time.time()
 
-    def process_view(self, request, view_func, view_args, view_kwargs):
+    @staticmethod
+    def process_view(request, view_func, view_args, view_kwargs):
         _thread_locals.view_func = view_func.__name__ if view_func else None
         _thread_locals.view_args = view_args if view_args else None
         _thread_locals.view_kwargs = view_kwargs if view_kwargs else None
 
-    def process_response(self, request, response):
+    @staticmethod
+    def process_response(request, response):
 
         if hasattr(_thread_locals, 'request_start_time'):
             request_end_time = time.time()

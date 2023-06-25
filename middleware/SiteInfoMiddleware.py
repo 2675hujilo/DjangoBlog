@@ -1,11 +1,14 @@
+from django.utils.deprecation import MiddlewareMixin
+
 from Blog.models import SiteLink, SiteInfo, SiteMenu, Category
 
 
-class SiteInfoMiddleware:
+class SiteInfoMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
-        self.get_response = get_response
+        super().__init__(get_response)
 
-    def __call__(self, request):
+    @staticmethod
+    def process_request(request):
         # 网站链接
         links = SiteLink.objects.all().order_by('link_order')
         request.site_links = links.filter(link_type='site')
@@ -21,5 +24,3 @@ class SiteInfoMiddleware:
         request.site_menus = SiteMenu.objects.all()
         # 分类
         request.site_categories = Category.objects.all()
-        response = self.get_response(request)
-        return response

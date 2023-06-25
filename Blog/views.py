@@ -181,7 +181,7 @@ def post_detail(request, pk):
 
 def index(request, pk=None):
     if pk:
-        posts = Post.objects.filter(categories__category_id=pk)
+        posts = Post.objects.filter(categories__category_id=pk).order_by('-updated_at')
     else:
         # 获取所有文章
         posts = Post.objects.filter(status="published").order_by("-updated_at")

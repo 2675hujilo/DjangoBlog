@@ -35,12 +35,10 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('new/', views.new_post, name='new_post'),
-    re_path(r'^media/uploads/(?P<path>.*)/$', serve, {'document_root': settings.MEDIA_ROOT}),
-    re_path(r'^media/images/pic/(?P<path>.*)/$', picture_view),
+    re_path('^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/images/pic/(?P<path>.*)/$', picture_view),
-    re_path(r'^static/images/(?P<path>.*)/$', picture_view),
     re_path(r'ckeditor/', include('ckeditor_uploader.urls')),
-    re_path(r'.*', view_404,name='view_404'),
+    re_path(r'.*', view_404, name='view_404'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

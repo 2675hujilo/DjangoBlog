@@ -83,13 +83,14 @@ class AccessLogMiddleware(MiddlewareMixin):
             _thread_locals.start_time_str = datetime.fromtimestamp(request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
             _thread_locals.end_time_str = datetime.fromtimestamp(request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
             _thread_locals.duration_ms = int((request_end_time - request_start_time) * 1000)
+            _thread_locals.user_id = None
+            _thread_locals.username = None
+            if request.user:
+                if request.user.is_authenticated:
+                    _thread_locals.user_id = request.user.user_id
+                    _thread_locals.username = request.user.username
 
-            if request.user.is_authenticated:
-                _thread_locals.user_id = request.user.user_id
-                _thread_locals.username = request.user.username
-            else:
-                _thread_locals.user_id = None
-                _thread_locals.username = None
+
 
             _thread_locals.post_id = get_post_id(request)
             _thread_locals.post_title = get_post_title(_thread_locals.post_id)

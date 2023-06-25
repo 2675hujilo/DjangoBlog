@@ -258,11 +258,12 @@ class SiteLink(models.Model):
     link_url = models.URLField(blank=True, null=True, verbose_name='链接地址')
     link_img_url = models.ImageField(blank=True, null=True, verbose_name='图片地址')
     description = models.TextField(blank=True, null=True, verbose_name='链接描述')
-    page_footer_notice = models.TextField(null=True, blank=True, verbose_name='页面底部版权声明')
     LINK_CHOICES = [
         ('user', '用户链接'),
         ('site', '友情链接'),
         ('footer', '底部声明'),
+        ('focus', '聚焦图'),
+        ('slideshow', '轮播图'),
 
     ]
     link_type = models.TextField(max_length=30, choices=LINK_CHOICES, verbose_name='链接类型')

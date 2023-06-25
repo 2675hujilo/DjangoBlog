@@ -17,9 +17,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.views.generic import RedirectView
 from django.views.static import serve
-
-from Blog import views
-from Blog.views import LogoutView, picture_view, view_404
+from Blog.views import LogoutView, picture_view, view_404, index, login, register, post_detail, new_post
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -28,13 +26,13 @@ from DjangoBlog.settings import MEDIA_ROOT
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', RedirectView.as_view(url='index/')),
-    path('index/<int:pk>/', views.index, name='index'),
-    path('index/', views.index, name='index'),
-    path('login/', views.login, name='login'),
-    path('register/', views.register, name='register'),
+    path('index/<int:pk>/', index, name='index'),
+    path('index/', index, name='index'),
+    path('login/', login, name='login'),
+    path('register/', register, name='register'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('post/<int:pk>/', views.post_detail, name='post_detail'),
-    path('new/', views.new_post, name='new_post'),
+    path('post/<int:pk>/', post_detail, name='post_detail'),
+    path('new/', new_post, name='new_post'),
     re_path('^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/images/pic/(?P<path>.*)/$', picture_view),
     re_path(r'ckeditor/', include('ckeditor_uploader.urls')),

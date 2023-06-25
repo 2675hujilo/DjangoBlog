@@ -19,7 +19,7 @@ from django.views.generic import RedirectView
 from django.views.static import serve
 
 from Blog import views
-from Blog.views import LogoutView, picture_view
+from Blog.views import LogoutView, picture_view, view_404
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -40,6 +40,7 @@ urlpatterns = [
     re_path(r'^static/images/pic/(?P<path>.*)/$', picture_view),
     re_path(r'^static/images/(?P<path>.*)/$', picture_view),
     re_path(r'ckeditor/', include('ckeditor_uploader.urls')),
+    re_path(r'.*', view_404,name='view_404'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

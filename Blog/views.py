@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 
@@ -240,3 +240,7 @@ def picture_view(request, path):
         content_type = 'image/jpeg'
 
     return FileResponse(open(image_path, 'rb'), content_type=content_type)
+
+
+def view_404(request, exception=None):
+    return HttpResponse(status=404)

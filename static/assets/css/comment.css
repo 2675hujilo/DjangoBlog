@@ -62,3 +62,29 @@
     border: none;
     background-color: transparent;
 }
+
+
+.comment-input {
+  width: 500% !important;
+  min-height: 150px;
+  background-color: rgba(255,255,255,.3);
+  backdrop-filter: blur(10px);
+  white-space: pre-wrap;
+  border-style: solid; /* 边框样式 */
+  border-width: 1px; /* 边框宽度 */
+  border-color: skyblue; /* 边框颜色 */
+}
+.comment-input :focus {
+  outline: none;
+  border-color: skyblue; /* 文本框获取焦点时，将边框颜色设置为透明 */
+}
+
+.login-input{
+  background-color: rgba(255,255,255,.3);
+  backdrop-filter: blur(10px);
+  white-space: pre-wrap;
+  border-style: solid; /* 边框样式 */
+  border-width: 1px; /* 边框宽度 */
+  border-color: skyblue; /* 边框颜色 */
+}
+

@@ -40,9 +40,9 @@
                                 <form method="post" style="display:none;" class="reply-form">
                                     <label>
                                         {% csrf_token %}
-                                        <input name="content"
+                                        <textarea name="content"
                                                placeholder="{% if comment.reply_to %}回复 {{ comment.reply_to }}：{% else %}回复 {{ comment.username }}：{% endif %}"
-                                               class=form-control>
+                                                  class=comment-input rows="4"></textarea>
                                     </label><br>
                                     <input type="hidden" name="root_id" value="{{ comment.comment_id }}">
                                     <input type="hidden" name="parent_id" value="{{ comment.comment_id }}">
@@ -68,11 +68,9 @@
                                         {% endif %}
                                             <!-- 子评论回复文本输入表单 -->
                                             <form method="post" style="display:none;" class="reply-form">
+                                                {% csrf_token %}
                                                 <label>
-                                                    {% csrf_token %}
-                                                    <input name="content"
-                                                           placeholder=" 回复 {{ child_comment.username }}： "
-                                                           class=form-control>
+                                                    <textarea name="content" placeholder=" 回复 {{ child_comment.username }}："class=comment-input rows="5"></textarea>
                                                 </label><p>
                                                 <input  type="hidden" name="root_id" value="{{ comment.comment_id }}">
                                                 <input  type="hidden" name="parent_id" value="{{ child_comment.comment_id }}">
@@ -91,14 +89,11 @@
                         {% endfor %}
                         <!-- 顶级评论 -->
                         <button class="btn btn-primary btn-block" id="show-comment-form-btn">写评论</button>
-                        <form method="post" enctype="multipart/form-data" style="display: none;" id="comment-form">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <label for="editor">发布评论</label>
-                                <label>
-                                    <input name="content"></input>
-                                </label>
-                            </div>
+                        <form method="post" enctype="multipart/form-data" style="display: none;" id="comment-form" class="reply-form">
+                            {% csrf_token %}<hr>
+                            <label>
+                                <textarea type="text" name="content" class="comment-input" rows="5"></textarea>
+                            </label>
                             <script src="{% static "assets/js/jquery-3.2.1.min.js" %}"></script>
                             <button class="btn btn-primary btn-block" type="submit">发布</button>
                             <script type="text/javascript">
@@ -108,9 +103,6 @@
                                     });
                                 });
                             </script>
-                            {% if error_msg %}
-                                <p style="color: red" class="alert alert-danger">{{ error_msg }}</p>
-                            {% endif %}
                         </form>
 
                         <script type="text/javascript">
@@ -124,6 +116,11 @@
                             });
 
                         </script>
+                        {% if error_msg %}
+                            <script>
+                                alert('{{ error_msg }}');
+                            </script>
+                        {% endif %}
                         <hr>
                         <!-- 分页 -->
                         <nav aria-label="Page navigation example">

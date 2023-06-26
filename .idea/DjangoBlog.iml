@@ -19,7 +19,6 @@
     <orderEntry type="library" name="baguettebox.js" level="application" />
   </component>
   <component name="PackageRequirementsSettings">
-    <option name="removeUnused" value="true" />
     <option name="modifyBaseFiles" value="true" />
   </component>
   <component name="PyDocumentationSettings">

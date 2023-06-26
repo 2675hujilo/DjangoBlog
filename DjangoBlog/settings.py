@@ -102,7 +102,8 @@ DATABASES = {
             os.environ.get('DJANGO_MYSQL_PORT') or 3306),
         'OPTIONS': {
             'charset': 'utf8mb4'},
-    }}
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -199,3 +200,36 @@ CACHES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 SESSION_CACHE_ALIAS = "default"
+
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html?
+CELERY_TIMEZONE = "Asia/Shanghai"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'default'
+
+# broker redis
+DJANGO_DEFAULT_CACHES = CACHES['default']
+CELERY_BROKER_URL = 'redis://:%s@%s/2' % (
+    DJANGO_DEFAULT_CACHES["OPTIONS"], DJANGO_DEFAULT_CACHES["LOCATION"].split("/")[2])
+
+CELERY_WORKER_CONCURRENCY = 10  # worker并发数
+CELERYD_FORCE_EXECV = True  # 非常重要,有些情况下可以防止死
+CELERY_RESULT_EXPIRES = 3600  # 任务结果过期时间
+
+CELERY_WORKER_DISABLE_RATE_LIMITS = True  # 任务发出后，经过一段时间还未收到acknowledge , 就将任务重新交给其他worker执行
+CELERY_WORKER_PREFETCH_MULTIPLIER = 60  # celery worker 每次去redis取任务的数量
+
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000  # 每个worker执行了多少任务就会死掉，我建议数量可以大一些，比如200
+
+CELERY_ENABLE_UTC = False
+DJANGO_CELERY_BEAT_TZ_AWARE = True
+
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+
+# celery消息的序列化方式，由于要把对象当做参数所以使用pickle,使用pickle,worker必须非root用户启动
+CELERY_RESULT_SERIALIZER = 'pickle'
+CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_TASK_SERIALIZER = 'pickle'

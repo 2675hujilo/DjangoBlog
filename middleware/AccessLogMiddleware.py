@@ -5,7 +5,7 @@ from datetime import datetime
 from threading import local
 from django.core.exceptions import SuspiciousOperation
 from django.utils.deprecation import MiddlewareMixin
-
+from Blog.tasks import save_access_log
 from Blog.models import Post, AccessLog
 
 logger = logging.getLogger(__name__)
@@ -95,41 +95,32 @@ class AccessLogMiddleware(MiddlewareMixin):
 
             _thread_locals.post_id = get_post_id(request)
             _thread_locals.post_title = get_post_title(_thread_locals.post_id)
-            try:
-                # 记录访问日志
-                access_record = AccessLog(
-                    user_id=_thread_locals.user_id,
-                    user_name=_thread_locals.username,
-                    post_id=_thread_locals.post_id,
-                    post_title=_thread_locals.post_title,
-                    session_id=request.session.session_key,
-                    ip_address=get_client_ip(request),
-                    platform_name=request.user_agent.os.family,
-                    platform_version=request.user_agent.os.version_string,
-                    browser_family=request.user_agent.browser.family,
-                    browser_version=request.user_agent.browser.version_string,
-                    referer=request.META.get('HTTP_REFERER', ''),
-                    request_url=request.build_absolute_uri(),
-                    http_method=request.method,
-                    body=request.read(),
-                    content_type=request.content_type,
-                    user_agent_string=str(request.META.get('HTTP_USER_AGENT')),
-                    status_code=response.status_code,
-                    view_func=getattr(_thread_locals, 'view_func', None),
-                    view_args=getattr(_thread_locals, 'view_args', None),
-                    view_kwargs=getattr(_thread_locals, 'view_kwargs', None),
-                    http_protocol=request.scheme,
-                    port_number=request.META.get('SERVER_PORT'),
-                    request_start_time=_thread_locals.start_time_str,
-                    request_end_time=_thread_locals.end_time_str,
-                    request_duration=_thread_locals.duration_ms,
-                    response_size=response.get('Content-Length'),
-                    http_version=request.META['SERVER_PROTOCOL'],
-                )
-
-                # 在数据库中保存访问记录
-                access_record.save()
-
-            except SuspiciousOperation as err:
-                logger.warning(str(err))
+            save_access_log.delay(_thread_locals.user_id,
+                                  _thread_locals.username,
+                                  _thread_locals.post_id,
+                                  _thread_locals.post_title,
+                                  request.session.session_key,
+                                  get_client_ip(request),
+                                  request.user_agent.os.family,
+                                  request.user_agent.os.version_string,
+                                  request.user_agent.browser.family,
+                                  request.user_agent.browser.version_string,
+                                  request.META.get('HTTP_REFERER', ''),
+                                  request.build_absolute_uri(),
+                                  request.method,
+                                  request.read(),
+                                  request.content_type,
+                                  str(request.META.get('HTTP_USER_AGENT')),
+                                  response.status_code,
+                                  getattr(_thread_locals, 'view_func', None),
+                                  getattr(_thread_locals, 'view_args', None),
+                                  getattr(_thread_locals, 'view_kwargs', None),
+                                  request.scheme,
+                                  request.META.get('SERVER_PORT'),
+                                  _thread_locals.start_time_str,
+                                  _thread_locals.end_time_str,
+                                  _thread_locals.duration_ms,
+                                  response.get('Content-Length'),
+                                  request.META['SERVER_PROTOCOL'],
+                                  )
         return response

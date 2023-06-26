@@ -179,3 +179,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # 上传图片的根路径
 
 CKEDITOR_UPLOAD_PATH = os.path.join(BASE_DIR, 'media/uploads/')  # 文件保存为止，因为上边配置了media， 图片将保存至media/uploads下
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 5,  # 连接redis超时时间，单位为秒
+            "SOCKET_TIMEOUT": 5,  # redis读写操作超时时间，单位为秒
+            "CONNECTION_POOL_KWARGS": {"max_connections": 10000}
+        }
+    }
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"

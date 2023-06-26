@@ -45,3 +45,10 @@ python manage.py runserver_plus --cert server.crt 127.0.0.1:8000
 ```
 浏览器打开: https://127.0.0.1:8000/
 
+
+清空redis缓存
+```python
+from django_redis import get_redis_connection
+redis_conn = get_redis_connection("default")
+redis_conn.flushdb()
+```

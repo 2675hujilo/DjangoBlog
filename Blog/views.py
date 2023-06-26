@@ -1,12 +1,16 @@
 import mimetypes
 import os
+
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_de
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView as LogoutView_de
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import FileResponse, HttpResponse, Http404
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 
@@ -180,16 +184,33 @@ def post_detail(request, pk):
 
 
 def index(request, pk=None):
+    CACHE_TTL = 60 * 15  # 缓存超时时间为15分钟
+
     if pk:
-        posts = Post.objects.filter(categories__category_id=pk).order_by('-updated_at')
+        cache_key = f"posts_pk_{pk}"
+        # 尝试从缓存中读取结果
+        cached_result = cache.get(cache_key)
+        if cached_result is not None:
+            posts = cached_result
+        else:
+            # 从数据库获取数据
+            posts = Post.objects.filter(status="published", categories__category_id=pk).order_by('-updated_at')
+            # 写入缓存
+            cache.set(cache_key, posts, timeout=CACHE_TTL)
     else:
-        # 获取所有文章
-        posts = Post.objects.filter(status="published").order_by("-updated_at")
+        cache_key = "all_posts"
+        # 尝试从缓存中读取结果
+        cached_result = cache.get(cache_key)
+        if cached_result is not None:
+            posts = cached_result
+        else:
+            # 更新数据（如果没有使用缓存，或者原来的缓存已过期）
+            posts = Post.objects.filter(status="published").order_by("-updated_at")
+            # 写入缓存
+            cache.set(cache_key, posts, timeout=CACHE_TTL)
+
     for post in posts:
-        # 部分显示文章内容（前 200 个字符）
-        post.content = post.content[:200]
-        # 如果内容中有图片，则跳过该图片
-        while '<' in post.content and '>' in post.content:
+        if '<' in post.content and '>' in post.content:
             start_index = post.content.index('<')
             end_index = post.content.index('>', start_index) + 1
             img_str = post.content[start_index:end_index]
@@ -198,13 +219,20 @@ def index(request, pk=None):
     paginator = Paginator(posts, per_page=5, orphans=True)
     page_num = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_num)
-    # 用户已认证
+
     if request.user.is_authenticated:
         message = '欢迎您，' + str(request.user) + '！'
-    # 用户未认证
     else:
         message = '请登录。'
+
     return render(request, 'blog/index.html', {'message': message, "posts": page_obj})
+
+
+@receiver([post_save, post_delete], sender=Post)
+def clear_post_cache(sender, **kwargs):
+    cache.delete("all_posts")  # 清除所有帖子的缓存
+    for pk in Category.objects.values_list('category_id', flat=True).distinct():
+        cache.delete(f"posts_pk_{pk}")  # 清除特定分类文章的缓存
 
 
 @login_required(login_url='login')

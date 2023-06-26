@@ -8,8 +8,6 @@ from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -228,13 +226,6 @@ def index(request, pk=None):
     return render(request, 'blog/index.html', {'message': message, "posts": page_obj})
 
 
-@receiver([post_save, post_delete], sender=Post)
-def clear_post_cache(sender, **kwargs):
-    cache.delete("all_posts")  # 清除所有帖子的缓存
-    for pk in Category.objects.values_list('category_id', flat=True).distinct():
-        cache.delete(f"posts_pk_{pk}")  # 清除特定分类文章的缓存
-
-
 @login_required(login_url='login')
 def new_post(request):
     if request.method == 'POST':
@@ -272,3 +263,5 @@ def picture_view(request, path):
 
 def view_404(request, exception=None):
     return HttpResponse(status=404)
+
+

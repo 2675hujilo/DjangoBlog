@@ -64,6 +64,9 @@ class Category(models.Model):
         db_table = 'category'
         verbose_name_plural = '分类'
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True, verbose_name='文章ID')
@@ -90,6 +93,9 @@ class Post(models.Model):
     class Meta:
         db_table = 'post'
         verbose_name_plural = '文章'
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
@@ -118,6 +124,9 @@ class Comment(models.Model):
     class Meta:
         db_table = 'comment'
         verbose_name_plural = '评论'
+
+    def __str__(self):
+        return self.content
 
 
 class NoteForm(forms.ModelForm):
@@ -160,6 +169,9 @@ class AccessLog(models.Model):
     class Meta:
         db_table = 'access_log'
         verbose_name_plural = '访问日志'
+
+    def __str__(self):
+        return self.created_at
 
     @property
     def user_agent(self):
@@ -232,6 +244,9 @@ class SiteInfo(models.Model):
         db_table = 'site_info'
         verbose_name_plural = '网站信息'
 
+    def __str__(self):
+        return self.site_title
+
 
 class SiteMenu(models.Model):
     menu_id = models.AutoField(primary_key=True)
@@ -250,6 +265,9 @@ class SiteMenu(models.Model):
     class Meta:
         db_table = 'site_menu'
         verbose_name_plural = '网站菜单'
+
+    def __str__(self):
+        return self.name
 
 
 class SiteLink(models.Model):
@@ -272,3 +290,6 @@ class SiteLink(models.Model):
     class Meta:
         db_table = 'site_link'
         verbose_name_plural = '网站链接'
+
+    def __str__(self):
+        return self.link_name

@@ -2,7 +2,6 @@ from celery import shared_task
 from .models import AccessLog
 
 
-# TODO:任务队列
 @shared_task(priority=10, routing_key='low-priority-queue')
 def save_access_log(user_id, username, post_id, post_title, session_id, ip_address, platform_name,
                     platform_version, browser_family, browser_version, referer, request_url,

@@ -33,6 +33,9 @@ python manage.py createsuperuser
 ```
 
 ### 开始运行：
+
+## 启动djangoblog
+
 http连接:
 ```bash
 python manage.py runserver
@@ -45,6 +48,10 @@ python manage.py runserver_plus --cert server.crt 127.0.0.1:8000
 ```
 浏览器打开: https://127.0.0.1:8000/
 
+## 启动celery任务队列
+```bash
+celery  -A DjangoBlog worker  -l info -P eventlet
+```
 
 清空redis缓存
 ```python

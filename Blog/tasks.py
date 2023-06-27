@@ -1,8 +1,9 @@
 from celery import shared_task
 from .models import AccessLog
 
+
 # TODO:任务队列
-# @shared_task
+@shared_task
 def save_access_log(user_id, username, post_id, post_title, session_id, ip_address, platform_name,
                     platform_version, browser_family, browser_version, referer, request_url,
                     http_method, body, content_type, user_agent_string, status_code,
@@ -10,7 +11,6 @@ def save_access_log(user_id, username, post_id, post_title, session_id, ip_addre
                     http_protocol='http', port_number=80,
                     request_start_time='', request_end_time='', request_duration='',
                     response_size='', http_version=''):
-    print("1")
     try:
         # 记录访问日志
         access_record = AccessLog(

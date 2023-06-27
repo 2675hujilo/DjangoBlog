@@ -1,5 +1,5 @@
 
-## 运行
+### 如何运行
 修改`djangoblog/setting.py` 修改数据库配置，如下所示：
 ```python
 DATABASES = {
@@ -53,13 +53,17 @@ python manage.py runserver_plus --cert server.crt 127.0.0.1:8000
 celery  -A DjangoBlog worker  -l info -P eventlet
 ```
 
-清空redis缓存
+
+### 常用命令
+
+* 清空redis缓存
 ```python
 from django_redis import get_redis_connection
 redis_conn = get_redis_connection("default")
 redis_conn.flushdb()
 ```
-清空日志表内容
+
+* 清空日志表内容
 ```mysql
 TRUNCATE TABLE access_log;
 ```

@@ -3,7 +3,7 @@ from .models import AccessLog
 
 
 # TODO:任务队列
-@shared_task
+@shared_task(priority=10, routing_key='low-priority-queue')
 def save_access_log(user_id, username, post_id, post_title, session_id, ip_address, platform_name,
                     platform_version, browser_family, browser_version, referer, request_url,
                     http_method, body, content_type, user_agent_string, status_code,

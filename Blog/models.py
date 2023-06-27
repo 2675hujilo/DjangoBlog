@@ -141,7 +141,7 @@ class AccessLog(models.Model):
     user_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='用户名')
     post_id = models.IntegerField(null=True, blank=True, verbose_name='访问文章ID')
     post_title = models.CharField(max_length=255, null=True, blank=True, verbose_name='访问文章标题')
-    ip_address = models.CharField(max_length=100, verbose_name='IP地址')
+    ip_address = models.CharField(null=True, blank=True,max_length=100, verbose_name='IP地址')
     referer = models.TextField(null=True, blank=True, verbose_name="来源")
     request_url = models.TextField(null=True, blank=True, verbose_name="请求地址")
     http_protocol = models.CharField(max_length=255, null=True, blank=True, verbose_name='协议类型')
@@ -156,10 +156,10 @@ class AccessLog(models.Model):
     status_code = models.IntegerField(null=True, blank=True, verbose_name='响应代码')
     session_id = models.CharField(max_length=255, null=True, blank=True, verbose_name='会话ID')
     port_number = models.IntegerField(null=True, blank=True, verbose_name='端口')
-    platform_name = models.CharField(max_length=50, null=True, verbose_name='操作系统名称')
-    platform_version = models.CharField(max_length=50, null=True, verbose_name='操作系统版本')
-    browser_family = models.CharField(max_length=50, null=True, verbose_name='浏览器品牌')
-    browser_version = models.CharField(max_length=50, null=True, verbose_name='浏览器版本')
+    platform_name = models.CharField(max_length=50, null=True,blank=True,  verbose_name='操作系统名称')
+    platform_version = models.CharField(max_length=50, null=True,blank=True,  verbose_name='操作系统版本')
+    browser_family = models.CharField(max_length=50, null=True,blank=True,  verbose_name='浏览器品牌')
+    browser_version = models.CharField(max_length=50, null=True,blank=True,  verbose_name='浏览器版本')
     request_start_time = models.DateTimeField(max_length=50, null=True, blank=True, verbose_name="请求开始时间")
     request_end_time = models.DateTimeField(max_length=50, null=True, blank=True, verbose_name="请求结束时间")
     request_duration = models.IntegerField(null=True, blank=True, verbose_name="请求持续时长(秒)")
@@ -171,7 +171,7 @@ class AccessLog(models.Model):
         verbose_name_plural = '访问日志'
 
     def __str__(self):
-        return self.created_at
+        return str(self.created_at)
 
     @property
     def user_agent(self):

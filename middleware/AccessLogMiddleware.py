@@ -90,10 +90,12 @@ class AccessLogMiddleware(MiddlewareMixin):
             _thread_locals.duration_ms = int((request_end_time - request_start_time) * 1000)
             _thread_locals.user_id = None
             _thread_locals.username = None
-            if request.user:
+            try:
                 if request.user.is_authenticated:
                     _thread_locals.user_id = request.user.user_id
                     _thread_locals.username = request.user.username
+            except Exception as e:
+                logging.warning(str(e))
 
             _thread_locals.post_id = get_post_id(request)
             _thread_locals.post_title = get_post_title(_thread_locals.post_id)

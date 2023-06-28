@@ -3,10 +3,12 @@ import re
 import time
 from datetime import datetime
 from threading import local
+
 from django.core.exceptions import SuspiciousOperation
 from django.utils.deprecation import MiddlewareMixin
+
+from Blog.models import Post
 from Blog.tasks import save_access_log
-from Blog.models import Post, AccessLog
 
 logger = logging.getLogger(__name__)
 

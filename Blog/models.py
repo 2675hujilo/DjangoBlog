@@ -199,6 +199,8 @@ class SiteInfo(models.Model):
     site_title = models.CharField(max_length=200, verbose_name='网站标题')
     site_description = models.TextField(null=True, blank=True, verbose_name='网站描述')
     site_avatar = models.ImageField(null=True, blank=True, verbose_name='网站头像')
+    index_title = models.CharField(null=True, blank=True,max_length=200, verbose_name='主页面标题')
+    index_description = models.TextField(null=True, blank=True, verbose_name='主页面描述')
     slideshow_images = models.ImageField(null=True, blank=True, verbose_name='首页轮播图')
     language_default = models.CharField(max_length=2, choices=LANG_CHOICES, default='zh', verbose_name='网站默认语言')
     enable_comments = models.BooleanField(default=True, verbose_name='启用评论系统')

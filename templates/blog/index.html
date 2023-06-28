@@ -14,8 +14,16 @@
                         </div>
                     </section>
                 </div>
-                <h2 class="text-info">博客主界面</h2>
-                <p>博客主界面描述</p>
+                {% if request.site_infos.index_title %}
+                    <h2 class="text-info">{{ request.site_infos.index_title }}</h2>
+                {% else %}
+                    <h2 class="text-info">月亮之下</h2>
+                {% endif %}
+                {% if request.site_infos.index_description %}
+                    <p>{{ request.site_infos.index_description }}</p>
+                {% else %}
+                <p>我熬落霞一壶，饮星月一盏，披风雪一裳，织山川一卷。</p>
+                {% endif %}
                 <div class="block-content" id="back-image-all">
                     {% for post in posts %}
                         <div class="clean-blog-post">

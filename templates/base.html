@@ -4,10 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    {% if request.site_infos.site_description %}
-        <title>{{ request.site_infos.site_title }} - {{ request.site_infos.site_description }}</title>
+    {% if request.site_infos.site_title %}
+        <title>月亮之下 - 我熬落霞一壶，饮星月一盏，披风雪一裳，织山川一卷。</title>
     {% else %}
-        <title>{{ request.site_infos.site_title }}</title>
+        {% if request.site_infos.site_description %}
+            <title>{{ request.site_infos.site_title }} - {{ request.site_infos.site_description }}</title>
+        {% else %}
+            <title>{{ request.site_infos.site_title }}</title>
+        {% endif %}
     {% endif %}
     {% if request.site_infos.site_avatar %}
         <link rel="shortcut icon" type="image/x-icon" href="{% get_media_prefix %}{{ request.site_infos.site_avatar }}">

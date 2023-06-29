@@ -1,8 +1,22 @@
+# 准备环境配置
+
+* 安装python第三方库
+```bash
+pip install -r requirements.txt
+```
+
+* 安装redis
+```
+下载地址
+https://github.com/tporadowski/redis/releases
+```
+
 # 如何运行
 
-1. 修改`djangoblog/setting.py` 修改数据库配置，如下所示：
+1. 修改`djangoblog/setting.py` 修改配置，如下所示：
 
 ```python
+# mysql配置
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -13,6 +27,25 @@ DATABASES = {
         'PORT': 3306,
     }
 }
+
+# redis配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 5,  # 连接redis超时时间，单位为秒
+            "SOCKET_TIMEOUT": 5,  # redis读写操作超时时间，单位为秒
+            "CONNECTION_POOL_KWARGS": {"max_connections": 10000}
+        }
+    }
+}
+
+# 任务队列配置
+BROKER_URL = "redis://127.0.0.1:6379/1",
+
+celery_result_backend = 'redis://:123456@localhost:6379/1'
 ```
 
 2. 创建数据库
@@ -45,6 +78,11 @@ python manage.py runserver
 ```
 
 浏览器打开: http://127.0.0.1:8000/
+* 启动redis
+
+```bash
+redis-server.exe redis.windows.conf
+```
 
 * 启动celery任务队列
 
@@ -56,7 +94,7 @@ celery  -A DjangoBlog worker  -l info -P eventlet
 
 # 常用命令
 
-* 清空redis缓存
+* 清空redis
 
 ```python
 from django_redis import get_redis_connection

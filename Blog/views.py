@@ -8,9 +8,10 @@ from django.contrib.auth.views import LogoutView as LogoutView_de
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import FileResponse, HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import FileResponse, HttpResponse, Http404
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.views.defaults import page_not_found
 
 from Blog.models import Post, Comment, User, Category
 
@@ -104,10 +105,16 @@ def get_children(request, comment):
 
 def post_detail(request, pk):
     # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
-    post = get_object_or_404(Post, pk=pk)
-    # 如果帖子未公开
-    if post.status != "published":
-        return HttpResponse(status=404)
+    try:
+        # 获取指定 pk 的 Post 实例
+        post = Post.objects.get(pk=pk)
+
+        # 如果帖子未公开或不存在
+        if post.status != "published" or not post.exists():
+            raise Http404
+
+    except Post.DoesNotExist:
+        return HttpResponse(page_not_found(request, None))
     # 更新文章的浏览量
     post.views += 1
     post.save()
@@ -182,7 +189,7 @@ def post_detail(request, pk):
 
 
 def index(request, pk=None):
-    CACHE_TTL = 60 * 15  # 缓存超时时间为15分钟
+    cache_ttl = 60 * 15  # 缓存超时时间为15分钟
 
     if pk:
         cache_key = f"posts_pk_{pk}"
@@ -193,8 +200,10 @@ def index(request, pk=None):
         else:
             # 从数据库获取数据
             posts = Post.objects.filter(status="published", categories__category_id=pk).order_by('-updated_at')
+            if not posts.exists():  # 检查是否存在符合条件的记录
+                return HttpResponse(page_not_found(request, None))  # 返回自定义的 404 页面
             # 写入缓存
-            cache.set(cache_key, posts, timeout=CACHE_TTL)
+            cache.set(cache_key, posts, timeout=cache_ttl)
     else:
         cache_key = "all_posts"
         # 尝试从缓存中读取结果
@@ -205,7 +214,7 @@ def index(request, pk=None):
             # 更新数据（如果没有使用缓存，或者原来的缓存已过期）
             posts = Post.objects.filter(status="published").order_by("-updated_at")
             # 写入缓存
-            cache.set(cache_key, posts, timeout=CACHE_TTL)
+            cache.set(cache_key, posts, timeout=cache_ttl)
 
     for post in posts:
         if '<' in post.content and '>' in post.content:
@@ -262,6 +271,4 @@ def picture_view(request, path):
 
 
 def view_404(request, exception=None):
-    return HttpResponse(status=404)
-
-
+    return HttpResponse(page_not_found(request, None))

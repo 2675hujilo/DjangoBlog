@@ -6,8 +6,16 @@
                  style="background-image:url(#);background-attachment: fixed;">
             <div class="container">
                 <div class="block-heading">
-                    <h2 class="text-info">注册</h2>
-                    <p>这里是注册描述</p>
+                    {% if request.site_infos.register_title %}
+                        <h2 class="text-info">{{ request.site_infos.register_title }}</h2>
+                    {% else %}
+                        <h2 class="text-info">注册</h2>
+                    {% endif %}
+                    {% if request.site_infos.register_description %}
+                        <p>{{ request.site_infos.register_description }}</p>
+                    {% else %}
+                        <p>这里是注册描述。。。</p>
+                    {% endif %}
                 </div>
                 <form method="post" id="back-image-all">
                     {% csrf_token %}
@@ -34,7 +42,7 @@
                         <p style="color: green">{{ success_msg }}</p>
                     {% endif %}
                     <button class="btn btn-primary btn-block" type="submit">注册</button>
-                    <a href="{% url 'login' %}" class="btn btn-primary btn-block">已有帐号。去登录</a>
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-block">已有账号？去登录</a>
                 </form>
                 <script>
                     let success_msg = "{{ success_msg }}";

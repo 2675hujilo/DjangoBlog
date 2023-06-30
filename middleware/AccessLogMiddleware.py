@@ -16,7 +16,10 @@ logger = logging.getLogger(__name__)
 def get_post_title(post_id):
     post_title = None
     if post_id:
-        post_title = Post.objects.get(post_id=post_id).title
+        try:
+            post_title = Post.objects.get(post_id=post_id).title
+        except Exception as e:
+            logger.warning(str(e))
     return post_title if post_title else None
 
 

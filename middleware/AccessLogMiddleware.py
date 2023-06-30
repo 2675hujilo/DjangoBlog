@@ -80,51 +80,49 @@ class AccessLogMiddleware(MiddlewareMixin):
 
     @staticmethod
     def process_response(request, response):
+        request_end_time = time.time()
+        request_start_time = getattr(_thread_locals, 'request_start_time', 0)
 
-        if hasattr(_thread_locals, 'request_start_time'):
-            request_end_time = time.time()
-            request_start_time = getattr(_thread_locals, 'request_start_time', 0)
+        _thread_locals.start_time_str = datetime.fromtimestamp(request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+        _thread_locals.end_time_str = datetime.fromtimestamp(request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
+        _thread_locals.duration_ms = int((request_end_time - request_start_time) * 1000)
+        _thread_locals.user_id = None
+        _thread_locals.username = None
+        try:
+            if request.user.is_authenticated:
+                _thread_locals.user_id = request.user.user_id
+                _thread_locals.username = request.user.username
+        except Exception as e:
+            logging.warning(str(e))
 
-            _thread_locals.start_time_str = datetime.fromtimestamp(request_start_time).strftime("%Y-%m-%d %H:%M:%S.%f")
-            _thread_locals.end_time_str = datetime.fromtimestamp(request_end_time).strftime("%Y-%m-%d %H:%M:%S.%f")
-            _thread_locals.duration_ms = int((request_end_time - request_start_time) * 1000)
-            _thread_locals.user_id = None
-            _thread_locals.username = None
-            try:
-                if request.user.is_authenticated:
-                    _thread_locals.user_id = request.user.user_id
-                    _thread_locals.username = request.user.username
-            except Exception as e:
-                logging.warning(str(e))
-
-            _thread_locals.post_id = get_post_id(request)
-            _thread_locals.post_title = get_post_title(_thread_locals.post_id)
-            save_access_log.delay(_thread_locals.user_id,
-                                  _thread_locals.username,
-                                  _thread_locals.post_id,
-                                  _thread_locals.post_title,
-                                  request.session.session_key,
-                                  get_client_ip(request),
-                                  request.user_agent.os.family,
-                                  request.user_agent.os.version_string,
-                                  request.user_agent.browser.family,
-                                  request.user_agent.browser.version_string,
-                                  request.META.get('HTTP_REFERER', ''),
-                                  request.build_absolute_uri(),
-                                  request.method,
-                                  request.read(),
-                                  request.content_type,
-                                  str(request.META.get('HTTP_USER_AGENT')),
-                                  response.status_code,
-                                  getattr(_thread_locals, 'view_func', None),
-                                  getattr(_thread_locals, 'view_args', None),
-                                  getattr(_thread_locals, 'view_kwargs', None),
-                                  request.scheme,
-                                  request.META.get('SERVER_PORT'),
-                                  _thread_locals.start_time_str,
-                                  _thread_locals.end_time_str,
-                                  _thread_locals.duration_ms,
-                                  response.get('Content-Length'),
-                                  request.META['SERVER_PROTOCOL'],
-                                  )
+        _thread_locals.post_id = get_post_id(request)
+        _thread_locals.post_title = get_post_title(_thread_locals.post_id)
+        save_access_log.delay(getattr(_thread_locals, 'user_id', None),
+                              getattr(_thread_locals, 'username', None),
+                              getattr(_thread_locals, 'post_id', None),
+                              getattr(_thread_locals, 'post_title', None),
+                              request.session.session_key,
+                              get_client_ip(request),
+                              request.user_agent.os.family,
+                              request.user_agent.os.version_string,
+                              request.user_agent.browser.family,
+                              request.user_agent.browser.version_string,
+                              request.META.get('HTTP_REFERER', ''),
+                              request.build_absolute_uri(),
+                              request.method,
+                              request.read(),
+                              request.content_type,
+                              str(request.META.get('HTTP_USER_AGENT')),
+                              response.status_code,
+                              getattr(_thread_locals, 'view_func', None),
+                              getattr(_thread_locals, 'view_args', None),
+                              getattr(_thread_locals, 'view_kwargs', None),
+                              request.scheme,
+                              request.META.get('SERVER_PORT'),
+                              getattr(_thread_locals, 'start_time_str', None),
+                              getattr(_thread_locals, 'end_time_str', None),
+                              getattr(_thread_locals, 'duration_ms', None),
+                              response.get('Content-Length'),
+                              request.META['SERVER_PROTOCOL'],
+                              )
         return response

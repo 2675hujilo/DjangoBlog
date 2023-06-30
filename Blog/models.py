@@ -141,7 +141,7 @@ class AccessLog(models.Model):
     user_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='用户名')
     post_id = models.IntegerField(null=True, blank=True, verbose_name='访问文章ID')
     post_title = models.CharField(max_length=255, null=True, blank=True, verbose_name='访问文章标题')
-    ip_address = models.CharField(null=True, blank=True,max_length=100, verbose_name='IP地址')
+    ip_address = models.CharField(null=True, blank=True, max_length=100, verbose_name='IP地址')
     referer = models.TextField(null=True, blank=True, verbose_name="来源")
     request_url = models.TextField(null=True, blank=True, verbose_name="请求地址")
     http_protocol = models.CharField(max_length=255, null=True, blank=True, verbose_name='协议类型')
@@ -156,10 +156,10 @@ class AccessLog(models.Model):
     status_code = models.IntegerField(null=True, blank=True, verbose_name='响应代码')
     session_id = models.CharField(max_length=255, null=True, blank=True, verbose_name='会话ID')
     port_number = models.IntegerField(null=True, blank=True, verbose_name='端口')
-    platform_name = models.CharField(max_length=50, null=True,blank=True,  verbose_name='操作系统名称')
-    platform_version = models.CharField(max_length=50, null=True,blank=True,  verbose_name='操作系统版本')
-    browser_family = models.CharField(max_length=50, null=True,blank=True,  verbose_name='浏览器品牌')
-    browser_version = models.CharField(max_length=50, null=True,blank=True,  verbose_name='浏览器版本')
+    platform_name = models.CharField(max_length=50, null=True, blank=True, verbose_name='操作系统名称')
+    platform_version = models.CharField(max_length=50, null=True, blank=True, verbose_name='操作系统版本')
+    browser_family = models.CharField(max_length=50, null=True, blank=True, verbose_name='浏览器品牌')
+    browser_version = models.CharField(max_length=50, null=True, blank=True, verbose_name='浏览器版本')
     request_start_time = models.DateTimeField(max_length=50, null=True, blank=True, verbose_name="请求开始时间")
     request_end_time = models.DateTimeField(max_length=50, null=True, blank=True, verbose_name="请求结束时间")
     request_duration = models.IntegerField(null=True, blank=True, verbose_name="请求持续时长(秒)")
@@ -199,12 +199,12 @@ class SiteInfo(models.Model):
     site_title = models.CharField(max_length=200, verbose_name='网站标题')
     site_description = models.TextField(null=True, blank=True, verbose_name='网站描述')
     site_avatar = models.ImageField(null=True, blank=True, verbose_name='网站头像')
-    index_title = models.CharField(null=True, blank=True,max_length=200, verbose_name='主页面标题')
+    index_title = models.CharField(null=True, blank=True, max_length=200, verbose_name='主页面标题')
     index_description = models.TextField(null=True, blank=True, verbose_name='主页面描述')
     slideshow_images = models.ImageField(null=True, blank=True, verbose_name='首页轮播图')
-    login_title = models.CharField(null=True, blank=True,max_length=200, verbose_name='登录页标题')
+    login_title = models.CharField(null=True, blank=True, max_length=200, verbose_name='登录页标题')
     login_description = models.TextField(null=True, blank=True, verbose_name='登录页描述')
-    register_title = models.CharField(null=True, blank=True,max_length=200, verbose_name='注册页标题')
+    register_title = models.CharField(null=True, blank=True, max_length=200, verbose_name='注册页标题')
     register_description = models.TextField(null=True, blank=True, verbose_name='注册页描述')
     language_default = models.CharField(max_length=2, choices=LANG_CHOICES, default='zh', verbose_name='网站默认语言')
     enable_comments = models.BooleanField(default=True, verbose_name='启用评论系统')
@@ -261,7 +261,7 @@ class SiteMenu(models.Model):
     menu_root_id = models.IntegerField(blank=True, null=True, verbose_name='根菜单id')
     LEVEL_CHOICES = (
         ('all', '所有人可见'),
-        ('guest', '仅游客可见'),
+        ('guest', '仅未登录用户可见'),
         ('login', '仅已登录用户可见'),
         ('admin', '仅管理员可见'),
     )
@@ -297,5 +297,9 @@ class SiteLink(models.Model):
         db_table = 'site_link'
         verbose_name_plural = '网站链接'
 
+    def get_second_name(self):
+        second_name = [choice[1] for choice in self.LINK_CHOICES][1]
+        return second_name
+
     def __str__(self):
-        return self.link_name
+        return self.get_second_name() + "-" + self.link_name + "-" + str(self.link_order)

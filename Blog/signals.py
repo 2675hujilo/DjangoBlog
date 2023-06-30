@@ -30,3 +30,6 @@ def clear_post_cache(sender, **kwargs):
     cache.delete("all_posts")  # 清除所有帖子的缓存
     for pk in Category.objects.values_list('category_id', flat=True).distinct():
         cache.delete(f"posts_pk_{pk}")  # 清除特定分类文章的缓存
+
+def clear_post(pk):
+    cache.delete(f"posts_pk_{pk}")

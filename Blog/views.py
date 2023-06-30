@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.views.defaults import page_not_found
 
 from Blog.models import Post, Comment, User, Category
-
+from Blog.signals import clear_post
 
 def login(request):
     if request.method == 'POST':
@@ -110,82 +110,83 @@ def post_detail(request, pk):
         post = Post.objects.get(pk=pk)
 
         # 如果帖子未公开或不存在
-        if post.status != "published" or not post.exists():
+        if post.status != "published":
             raise Http404
+            # 更新文章的浏览量
+        post.views += 1
+        post.save()
 
+        error_msg = None
+        comments = None
+        page_obj = None
+        # 检查用户是否登录，若未登录，则提示请登录；若已登录，则执行下面操作。
+        if request.method == "POST":
+            if request.user.is_authenticated:
+                status = "pending"
+                # 管理员默认通过审核
+                if request.user.is_superuser:
+                    status = "approved"
+                content = request.POST.get("content")
+                if content:
+                    user_id = request.user.pk
+                    email = request.POST.get("email")
+                    user = User.objects.get(pk=user_id)
+                    parent_id = request.POST.get("parent_id")
+                    root_id = request.POST.get("root_id")
+                    reply_to = request.POST.get("reply_to")
+                    old_index = Comment.objects.filter(post_id=post, root_id=None).count()
+                    username = user.username
+                    # 如果有根评论，则设置reply_to为父评论的username，否则为空
+                    if root_id:
+                        reply_to = reply_to
+                    elif reply_to:
+                        reply_to = reply_to
+                    else:
+                        reply_to = None
+                    if parent_id or root_id:
+                        new_index = None
+                    else:
+                        new_index = old_index + 1
+                    comment = Comment(
+                        user_id=user,
+                        username=username,
+                        post_id=post,
+                        parent_id=parent_id,
+                        root_id=root_id,
+                        content=content,
+                        email=email,
+                        status=status,
+                        is_top=False,
+                        index=new_index,
+                        reply_to=reply_to,
+                    )
+                    comment.save()
+                    clear_post(parent_id)
+                else:
+                    error_msg = "请输入评论！"
+
+            comments = Comment.objects.filter(
+                Q(post_id=post.pk) & (Q(status="approved") | Q(user_id=request.user.pk)),
+                root_id=None
+            ).order_by("created_at")
+            if comments:
+                for comment in comments:
+                    comment.children = get_children(request, comment)
+                # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
+                paginator = Paginator(comments, per_page=10, orphans=True)
+                # 获取当前请求中page参数的值（即所请求的页数）
+                # 如果request.GET中不存在page参数，默认为第一页
+                page_num = request.GET.get("page", 1)
+                # 调用Paginator对象的get_page()方法获取对应得Page对象
+                # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
+                page_obj = paginator.get_page(page_num)
+            else:
+                error_msg = "请先登录后再评论！"
+        return render(request, "blog/post.html",
+                      {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
     except Post.DoesNotExist:
         return HttpResponse(page_not_found(request, None))
-    # 更新文章的浏览量
-    post.views += 1
-    post.save()
 
-    error_msg = None
-    comments = None
-    page_obj = None
-    # 检查用户是否登录，若未登录，则提示请登录；若已登录，则执行下面操作。
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            status = "pending"
-            # 管理员默认通过审核
-            if request.user.is_superuser:
-                status = "approved"
-            content = request.POST.get("content")
-            if content:
-                user_id = request.user.pk
-                email = request.POST.get("email")
-                user = User.objects.get(pk=user_id)
-                parent_id = request.POST.get("parent_id")
-                root_id = request.POST.get("root_id")
-                reply_to = request.POST.get("reply_to")
-                old_index = Comment.objects.filter(post_id=post, root_id=None).count()
-                username = user.username
-                # 如果有根评论，则设置reply_to为父评论的username，否则为空
-                if root_id:
-                    reply_to = reply_to
-                elif reply_to:
-                    reply_to = reply_to
-                else:
-                    reply_to = None
-                if parent_id or root_id:
-                    new_index = None
-                else:
-                    new_index = old_index + 1
-                comment = Comment(
-                    user_id=user,
-                    username=username,
-                    post_id=post,
-                    parent_id=parent_id,
-                    root_id=root_id,
-                    content=content,
-                    email=email,
-                    status=status,
-                    is_top=False,
-                    index=new_index,
-                    reply_to=reply_to,
-                )
-                comment.save()
-            else:
-                error_msg = "请输入评论！"
-
-        comments = Comment.objects.filter(
-            Q(post_id=post.pk) & (Q(status="approved") | Q(user_id=request.user.pk)),
-            root_id=None
-        ).order_by("created_at")
-        if comments:
-            for comment in comments:
-                comment.children = get_children(request, comment)
-            # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
-            paginator = Paginator(comments, per_page=10, orphans=True)
-            # 获取当前请求中page参数的值（即所请求的页数）
-            # 如果request.GET中不存在page参数，默认为第一页
-            page_num = request.GET.get("page", 1)
-            # 调用Paginator对象的get_page()方法获取对应得Page对象
-            # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
-            page_obj = paginator.get_page(page_num)
-    else:
-        error_msg = "请先登录后再评论！"
-    return render(request, "blog/post.html",
-                  {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
 
 
 def index(request, pk=None):

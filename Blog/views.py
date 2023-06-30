@@ -16,6 +16,7 @@ from django.views.defaults import page_not_found
 from Blog.models import Post, Comment, User, Category
 from Blog.signals import clear_post
 
+
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -186,7 +187,6 @@ def post_detail(request, pk):
                       {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
     except Post.DoesNotExist:
         return HttpResponse(page_not_found(request, None))
-
 
 
 def index(request, pk=None):

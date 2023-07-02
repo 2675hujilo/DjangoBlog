@@ -75,9 +75,6 @@ class Post(models.Model):
     content = RichTextUploadingField(verbose_name='正文内容', config_name='default')
     image_url = models.CharField(max_length=255, null=True, blank=True, verbose_name='配图链接')
     published_at = models.DateTimeField(null=True, blank=True, auto_now_add=True, verbose_name='发布时间')
-    views = models.IntegerField(default=0, verbose_name='阅读量')
-    likes = models.IntegerField(default=0, verbose_name='点赞数')
-    dislikes = models.IntegerField(default=0, verbose_name='踩数')
     is_public = models.BooleanField(default=True, verbose_name='是否公开')
     status_choice = [
         ('draft', '草稿'),
@@ -96,6 +93,21 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PostInfo(models.Model):
+    post_id = models.IntegerField(verbose_name='文章ID')
+    post_title = models.CharField(max_length=255, verbose_name='文章标题')
+    views = models.IntegerField(default=0, verbose_name='阅读量')
+    likes = models.IntegerField(default=0, verbose_name='点赞数')
+    dislikes = models.IntegerField(default=0, verbose_name='踩数')
+
+    class Meta:
+        db_table = 'post_info'
+        verbose_name_plural = "文章信息"
+
+    def __str__(self):
+        return self.post_title
 
 
 class Comment(models.Model):
@@ -117,7 +129,7 @@ class Comment(models.Model):
         ('pending', '待审核')
     ]
     status = models.CharField(choices=status_choice, max_length=9, verbose_name='状态', default="pending")
-    is_top = models.BooleanField(default="False",verbose_name='是否置顶')
+    is_top = models.BooleanField(default="False", verbose_name='是否置顶')
     email = models.EmailField(null=True, blank=True, verbose_name='电子邮件')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 

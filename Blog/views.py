@@ -107,26 +107,22 @@ def post_detail(request, title):
     cache_ttl = 60 * 15  # 缓存超时时间为15分钟
     try:
         # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
-        cache_key = f"posts_title_{title}"
+        cache_posts_key = f"posts_title_{title}"
         # 尝试从缓存中读取结果
-        cached_result = cache.get(cache_key)
-        if cached_result is not None:
-            post = cached_result
-            print("缓存")
+        cached_posts_result = cache.get(cache_posts_key)
+        if cached_posts_result is not None:
+            post = cached_posts_result
         else:
-            print("数据库i")
             # 获取指定 pk 的 Post 实例
             post = Post.objects.get(title=title)
-
             # 如果帖子未公开或不存在
             if post.status != "published":
-                raise Http404
+                HttpResponse(page_not_found(request, None))
                 # 更新文章的浏览量
-            cache.set(cache_key, post, timeout=cache_ttl)
+            cache.set(cache_posts_key, post, timeout=cache_ttl)
         post_info = PostInfo.objects.get(post_title=title)
         post_info.views += 1
         post_info.save()
-
         error_msg = None
         comments = None
         page_obj = None
@@ -176,21 +172,27 @@ def post_detail(request, title):
                     error_msg = "请输入评论内容！"
             else:
                 error_msg = "请先登录后再评论！"
-        comments = Comment.objects.filter(
-            Q(post_id=post.pk) & (Q(status="approved") | Q(user_id=request.user.pk)),
-            root_id=None
-        ).order_by("created_at")
-        if comments:
-            for comment in comments:
-                comment.children = get_children(request, comment)
-            # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
-            paginator = Paginator(comments, per_page=10, orphans=True)
-            # 获取当前请求中page参数的值（即所请求的页数）
-            # 如果request.GET中不存在page参数，默认为第一页
-            page_num = request.GET.get("page", 1)
-            # 调用Paginator对象的get_page()方法获取对应得Page对象
-            # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
-            page_obj = paginator.get_page(page_num)
+        cache_comment_key = f"posts_comment_{post.title}"
+        cache_comment_result = cache.get(cache_comment_key)
+        if cache_comment_result is not None:
+            comments = cache_comment_result
+        else:
+            comments = Comment.objects.filter(
+                Q(post_id=post.pk) & (Q(status="approved") | Q(user_id=request.user.pk)),
+                root_id=None
+            ).order_by("created_at")
+            if comments:
+                for comment in comments:
+                    comment.children = get_children(request, comment)
+                cache.set(cache_comment_key, comments, cache_ttl)
+        # 创建一个 Paginator 对象，每页显示10个评论，若没有凑成10个则或phans参数指定的数量
+        paginator = Paginator(comments, per_page=10, orphans=True)
+        # 获取当前请求中page参数的值（即所请求的页数）
+        # 如果request.GET中不存在page参数，默认为第一页
+        page_num = request.GET.get("page", 1)
+        # 调用Paginator对象的get_page()方法获取对应得Page对象
+        # 这里传入了page_num作为参数，表示需要返回用户请求的那一页
+        page_obj = paginator.get_page(page_num)
         return render(request, "blog/post.html",
                       {"post": post, "comments": comments, "page_obj": page_obj, "error_msg": error_msg})
     except Post.DoesNotExist:

@@ -26,7 +26,7 @@ from DjangoBlog.settings import MEDIA_ROOT
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', RedirectView.as_view(url='index/')),
-    path('index/<int:pk>/', index, name='index'),
+    path('index/<str:category_name>/', index, name='index'),
     path('index/', index, name='index'),
     path('login/', login, name='login'),
     path('register/', register, name='register'),

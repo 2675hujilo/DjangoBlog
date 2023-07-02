@@ -102,7 +102,7 @@ redis-server.exe redis.windows.conf
 * 启动celery任务队列
 
 ```bash
-celery  -A DjangoBlog worker  -l info -P eventlet 
+celery  -A DjangoBlog worker  -l info -P eventlet
 ```
 
 --purge:清空队列任务

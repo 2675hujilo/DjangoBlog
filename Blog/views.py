@@ -188,17 +188,18 @@ def post_detail(request, pk):
         return HttpResponse(page_not_found(request, None))
 
 
-def index(request, pk=None):
+def index(request, category_name=None):
     cache_ttl = 60 * 15  # 缓存超时时间为15分钟
 
-    if pk:
-        cache_key = f"posts_pk_{pk}"
+    if category_name:
+        cache_key = f"posts_category_name_{category_name}"
         # 尝试从缓存中读取结果
         cached_result = cache.get(cache_key)
         if cached_result is not None:
             posts = cached_result
         else:
             # 从数据库获取数据
+            pk = Category.objects.get(name=category_name).category_id
             posts = Post.objects.filter(status="published", categories__category_id=pk).order_by('-updated_at')
             if not posts.exists():  # 检查是否存在符合条件的记录
                 return HttpResponse(page_not_found(request, None))  # 返回自定义的 404 页面

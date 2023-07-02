@@ -44,7 +44,7 @@
                            aria-haspopup="true" aria-expanded="false">分类</a>
                         <div class="dropdown-menu bg-touming">
                             {% for category in request.site_categories %}
-                            <a class="dropdown-item" href="{% url 'index' category.category_id  %}">{{ category.name }}</a>
+                            <a class="dropdown-item" href="{% url 'index' category.name  %}">{{ category.name }}</a>
                             {% endfor %}
                         </div>
                     </li>

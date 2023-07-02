@@ -13,7 +13,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.defaults import page_not_found
 
-from Blog.models import Post, Comment, User, Category
+from Blog.models import Post, Comment, User, Category, PostInfo
 from Blog.signals import clear_post
 
 
@@ -104,18 +104,19 @@ def get_children(request, comment):
     return children
 
 
-def post_detail(request, pk):
+def post_detail(request, title):
     # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
     try:
         # 获取指定 pk 的 Post 实例
-        post = Post.objects.get(pk=pk)
+        post = Post.objects.get(title=title)
 
         # 如果帖子未公开或不存在
         if post.status != "published":
             raise Http404
             # 更新文章的浏览量
-        post.views += 1
-        post.save()
+        post_info = PostInfo.objects.get(post_title=title)
+        post_info.views += 1
+        post_info.save()
 
         error_msg = None
         comments = None

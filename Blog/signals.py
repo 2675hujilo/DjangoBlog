@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from .models import SiteInfo, Category, SiteLink, SiteMenu, Post
+from .models import SiteInfo, Category, SiteLink, SiteMenu, Post, PostInfo
 
 
 @receiver([post_save, post_delete], sender=Category)
@@ -35,3 +35,10 @@ def clear_post_cache(sender, **kwargs):
 
 def clear_post(pk):
     cache.delete(f"posts_pk_{pk}")
+
+
+@receiver(post_save, sender=Post)  # 监听Post模型的post_save事件
+def create_post_info(sender, instance, created, **kwargs):
+    if created:
+        post_info = PostInfo(post_id=instance.post_id, post_title=instance.title)
+        post_info.save()

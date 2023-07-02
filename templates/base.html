@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="{% static "assets/css/bg-image.css" %}">
     <link rel="stylesheet" href="{% static "assets/css/comment.css" %}">
     {% if request.site_infos.website_access_statistics %}
-            {{ request.site_infos.website_access_statistics|safe }}
+        {{ request.site_infos.website_access_statistics|safe }}
     {% endif %}
 </head>
 
@@ -38,13 +38,27 @@
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-1">
             <ul class="navbar-nav ml-auto">
+                {% for root_menu in request.site_menus %}
+                    <li class="nav-item dropdown">
+                        <a href="{{ root_menu.url }}" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                           role="button"
+                           aria-haspopup="true" aria-expanded="false">{{ root_menu.menu_text }}</a>
+                        {% if root_menu.children %}
+                            <div class="dropdown-menu bg-touming">
+                            {% for menu in root_menu.children %}
+                                <a class="dropdown-item" href="{{ menu.url }}">{{ menu.menu_text }}</a>
+                        {% endfor %}
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
                 {% if request.site_categories %}
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-haspopup="true" aria-expanded="false">分类</a>
                         <div class="dropdown-menu bg-touming">
                             {% for category in request.site_categories %}
-                            <a class="dropdown-item" href="{% url 'index' category.name  %}">{{ category.name }}</a>
+                                <a class="dropdown-item" href="{% url 'index' category.name %}">{{ category.name }}</a>
                             {% endfor %}
                         </div>
                     </li>
@@ -54,7 +68,8 @@
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-haspopup="true" aria-expanded="false">
                             {% if user.avatar %}
-                                <img src="{% get_media_prefix %}{{ user.avatar }}" class="avatar-img rounded-circle img-fluid"
+                                <img src="{% get_media_prefix %}{{ user.avatar }}"
+                                     class="avatar-img rounded-circle img-fluid"
                                      height="30" width="30" alt="">
                             {% else %}
                                 <img src="{% static "images/head.png" %}" class="avatar-img rounded-circle img-fluid"
@@ -89,7 +104,8 @@
     <div class="social">
         {% if request.user_links %}
             {% for link in request.user_links %}
-                    <a href="{{ link.link_url }}"><img src="{% get_media_prefix %}{{ link.link_img_url }}" alt="{{ link.link_name }}"></a>
+                <a href="{{ link.link_url }}"><img src="{% get_media_prefix %}{{ link.link_img_url }}"
+                                                   alt="{{ link.link_name }}"></a>
             {% endfor %}
         {% else %}
             <a href="https://space.bilibili.com/175784627"><img src="{% static "images/bilibili.png" %}" alt=""></a>
@@ -116,7 +132,7 @@
             <p class="copyright">{{ link.link_name }}</p>
         {% endfor %}
     {% else %}
-            <p class="copyright">CopyRight@2023</p>
+        <p class="copyright">CopyRight@2023</p>
     {% endif %}
 </footer>
 <script defer src="{% static "assets/js/bg-image.js" %}"></script>

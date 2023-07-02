@@ -268,9 +268,9 @@ class SiteInfo(models.Model):
 
 class SiteMenu(models.Model):
     menu_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=20, verbose_name='菜单名称')
-    url = models.CharField(max_length=10, verbose_name='URL地址')
-    menu_root_id = models.IntegerField(blank=True, null=True, verbose_name='根菜单id')
+    menu_text = models.CharField(max_length=20, verbose_name='菜单文本')
+    url = models.CharField(max_length=100, verbose_name='URL地址')
+    menu_root_id = models.BooleanField(default=True, verbose_name='根菜单id')
     LEVEL_CHOICES = (
         ('all', '所有人可见'),
         ('guest', '仅未登录用户可见'),
@@ -279,13 +279,14 @@ class SiteMenu(models.Model):
     )
     menu_level = models.CharField(max_length=20, default='all', choices=LEVEL_CHOICES, verbose_name='权限等级')
     menu_order = models.IntegerField(default=1, verbose_name='菜单排序')
+    menus = models.ManyToManyField('self', blank=True, null=True, verbose_name='父菜单')
 
     class Meta:
         db_table = 'site_menu'
         verbose_name_plural = '网站菜单'
 
     def __str__(self):
-        return self.name
+        return self.menu_text
 
 
 class SiteLink(models.Model):

@@ -43,3 +43,7 @@ def clear_post_name(sender, **kwargs):
     for title in Post.objects.values_list('title', flat=True).distinct():
         cache.delete(f"posts_comment_{title}")
 
+
+@receiver([post_save, post_delete], sender=SiteMenu)
+def clear_site_menu_cache(sender, **kwargs):
+    cache.delete("site_menus")

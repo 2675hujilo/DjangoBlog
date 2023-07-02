@@ -117,7 +117,7 @@ class Comment(models.Model):
         ('pending', '待审核')
     ]
     status = models.CharField(choices=status_choice, max_length=9, verbose_name='状态', default="pending")
-    is_top = models.BooleanField(verbose_name='是否置顶')
+    is_top = models.BooleanField(default="False",verbose_name='是否置顶')
     email = models.EmailField(null=True, blank=True, verbose_name='电子邮件')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 

@@ -28,8 +28,9 @@ def clear_site_info_cache(sender, **kwargs):
 @receiver([post_save, post_delete], sender=Post)
 def clear_post_cache(sender, **kwargs):
     cache.delete("all_posts")  # 清除所有帖子的缓存
-    for pk in Category.objects.values_list('category_id', flat=True).distinct():
-        cache.delete(f"posts_pk_{pk}")  # 清除特定分类文章的缓存
+    for name in Category.objects.values_list('name', flat=True).distinct():
+        # flat=True:结果以单个值的方式返回，而不是以元组或列表的形式。
+        cache.delete(f"posts_category_name_{name}")  # 清除特定分类文章的缓存
 
 
 def clear_post(pk):

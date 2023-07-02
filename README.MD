@@ -1,3 +1,18 @@
+# 项目介绍
+
+* 基于Django的个人博客(https://github.com/2675hujilo/DjangoBlog)
+* 使用的语言:Python，HTML，CSS
+* 使用到的工具:Django框架、Redis缓存数据库、MySQL数据库、Celery任务队列，CKEditor富文本编辑器
+* 数据库包含用戶表、分类表、文章表、评论表，网站信息表，网站链接表，网站菜单表，访问日志表。 
+* 已经实现的功能:
+1. CSRF令牌验证:通过对表单使用CSRF令牌验证，有效地防止跨站请求伪造攻击。
+2. Session:登录功能中，使用session实现了登陆状态的记忆和自动登录，提供更好的用户体验。
+3. 日志记录:使用Django自定义中间件，能够对每个请求进行详细记录并获取主要信息。使用Redis作为缓存数据库和Celery作为任务队列，避免了因日志导致的访问延迟问题。
+4. 缓存:对博客主页面和文章详情页进行了缓存处理。用户请求时首先从缓存中获取数据，若缓存未命中，则再向数据库查询。同时设置修改文章或者发布评论时自动删除对应缓存。
+5. 网站信息全局定义:根据网站信息表、网站链接表和网站菜单表快速定义网站标题、描述等内容。当网站信息表中存在多行信息时，可以通过level=True字段快速切换不同的标题和描述内容。
+6. 高并发支持:利用Redis缓存和Celery任务队列，使博客项目具备了处理大流量访问的能力，保证了系统在高峰期也能正常运行。
+7. 评论嵌套:使用`parent_id`和`root_id`字段来实现了评论的嵌套功能。用户可以回复其他人的评论，并形成层级结构，提高了交流与互动效果。
+ 
 # 准备环境配置
 
 * 安装python第三方库
@@ -13,7 +28,7 @@ https://github.com/tporadowski/redis/releases
 
 # 如何运行
 
-1. 修改`djangoblog/setting.py` 修改配置，如下所示：
+1. 修改`djangoblog/setting.py` 修改配置，如下所示:
 
 ```python
 # mysql配置
@@ -69,7 +84,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-3. 开始运行：
+3. 开始运行:
 
 * 启动djangoblog
 

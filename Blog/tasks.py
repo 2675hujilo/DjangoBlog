@@ -1,5 +1,7 @@
+import logging
+
 from celery import shared_task
-from .models import AccessLog
+from .models import AccessLog, PostInfo
 
 
 @shared_task(priority=10, routing_key='low-priority-queue')
@@ -44,4 +46,14 @@ def save_access_log(user_id, username, post_id, post_title, session_id, ip_addre
 
         access_record.save()
     except Exception as e:
-        raise e
+        logging.warning(str(e))
+
+
+@shared_task(priority=5, routing_key='low-priority-queue')
+def add_post_view(post_title):
+    try:
+        post_info = PostInfo.objects.get(post_title=post_title)
+        post_info.views += 1
+        post_info.save()
+    except Exception as e:
+        logging.warning(str(e))

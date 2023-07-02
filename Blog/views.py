@@ -12,7 +12,7 @@ from django.http import FileResponse, HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.defaults import page_not_found
-
+from Blog.tasks import add_post_view
 from Blog.models import Post, Comment, User, Category, PostInfo
 
 
@@ -120,9 +120,7 @@ def post_detail(request, title):
                 HttpResponse(page_not_found(request, None))
                 # 更新文章的浏览量
             cache.set(cache_posts_key, post, timeout=cache_ttl)
-        post_info = PostInfo.objects.get(post_title=title)
-        post_info.views += 1
-        post_info.save()
+        add_post_view.delay(title)
         error_msg = None
         comments = None
         page_obj = None

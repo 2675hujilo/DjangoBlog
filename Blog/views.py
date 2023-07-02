@@ -14,7 +14,6 @@ from django.urls import reverse_lazy
 from django.views.defaults import page_not_found
 
 from Blog.models import Post, Comment, User, Category, PostInfo
-from Blog.signals import clear_post
 
 
 def login(request):
@@ -105,15 +104,25 @@ def get_children(request, comment):
 
 
 def post_detail(request, title):
-    # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
+    cache_ttl = 60 * 15  # 缓存超时时间为15分钟
     try:
-        # 获取指定 pk 的 Post 实例
-        post = Post.objects.get(title=title)
+        # 获取指定 `pk` 对象的 `Post` 实例，不存在则返回 404 错误
+        cache_key = f"posts_title_{title}"
+        # 尝试从缓存中读取结果
+        cached_result = cache.get(cache_key)
+        if cached_result is not None:
+            post = cached_result
+            print("缓存")
+        else:
+            print("数据库i")
+            # 获取指定 pk 的 Post 实例
+            post = Post.objects.get(title=title)
 
-        # 如果帖子未公开或不存在
-        if post.status != "published":
-            raise Http404
-            # 更新文章的浏览量
+            # 如果帖子未公开或不存在
+            if post.status != "published":
+                raise Http404
+                # 更新文章的浏览量
+            cache.set(cache_key, post, timeout=cache_ttl)
         post_info = PostInfo.objects.get(post_title=title)
         post_info.views += 1
         post_info.save()
@@ -163,7 +172,6 @@ def post_detail(request, title):
                         reply_to=reply_to,
                     )
                     comment.save()
-                    clear_post(parent_id)
                 else:
                     error_msg = "请输入评论内容！"
             else:

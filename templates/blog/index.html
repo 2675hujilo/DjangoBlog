@@ -35,7 +35,7 @@
                                     <div class="info"><span
                                             class="text-muted">{{ post.published_at|date:"Y-m-d H:i:s" }}<a
                                             href="#">  {{ user.username }}</a></span></div>
-                                    <p>{{ post.content|safe }}</p><a href="{% url 'post_detail' pk=post.post_id %}"
+                                    <p>{{ post.content|safe }}</p><a href="{% url 'post_detail' post.title %}"
                                                                      class="btn btn-outline-primary btn-sm"
                                                                      type="button">阅读更多</a>
                                 </div>

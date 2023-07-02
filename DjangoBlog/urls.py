@@ -31,7 +31,7 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('register/', register, name='register'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('post/<int:pk>/', post_detail, name='post_detail'),
+    path('post/<str:title>/', post_detail, name='post_detail'),
     path('new/', new_post, name='new_post'),
     re_path('^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/images/pic/(?P<path>.*)/$', picture_view),

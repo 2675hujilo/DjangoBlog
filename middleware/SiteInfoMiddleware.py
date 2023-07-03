@@ -36,15 +36,30 @@ class SiteInfoMiddleware(MiddlewareMixin):
         request.site_infos = site_infos
 
         # 菜单
-        site_menus = cache.get('site_menus')
-        print("11")
+        level_admin = ['all', 'guest', 'login', 'admin']
+        level_login = ['all', 'login']
+        level_guest = ['all', 'guest']
+        level_all = ['all']
+
+        current_level = 'guest'
+        if request.user:
+            if request.user.is_authenticated:
+                if request.user.is_superuser:
+                    current_level = 'admin'
+                else:
+                    current_level = 'login'
+            else:
+                current_level = 'guest'
+        print("方法:", f"site_menus_{current_level}")
+        cache_menus_key = f"site_menus_{current_level}"
+        site_menus = cache.get(cache_menus_key)
         if not site_menus:
             site_menus = SiteMenu.objects.all()
-            root_menus = site_menus.filter(menu_root_id=True)
+            root_menus = site_menus.filter(menu_root_id=True, menu_level__in=eval(f"level_{current_level}")).order_by("menu_order")
             for root_menu in root_menus:
-                root_menu.children = site_menus.filter(menu_root_id=False, menus__in=[root_menu])
-                print("root_menu:", root_menu, "root_menu.children:", root_menu.children)
-            cache.set('site_menus', root_menus, timeout=3600)
+                root_menu.children = site_menus.filter(menu_root_id=False, menus__in=[root_menu],
+                                                   menu_level__in=eval(f"level_{current_level}")).order_by("menu_order")
+            cache.set(cache_menus_key, root_menus, timeout=cache_ttl)
         request.site_menus = site_menus
 
         # 分类

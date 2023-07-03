@@ -46,4 +46,6 @@ def clear_post_name(sender, **kwargs):
 
 @receiver([post_save, post_delete], sender=SiteMenu)
 def clear_site_menu_cache(sender, **kwargs):
-    cache.delete("site_menus")
+    for level in SiteMenu.objects.values_list('menu_level', flat=True).distinct():
+        cache_key = f"site_menus_{level}"
+        cache.delete(cache_key)

@@ -183,7 +183,7 @@ class AccessLog(models.Model):
         verbose_name_plural = '访问日志'
 
     def __str__(self):
-        return str(self.created_at)
+        return str(self.request_start_time)+"-"+str(self.status_code)+"-"+str(self.http_method)+"-"+str(self.browser_family)+"-"+str(self.request_url)+"-"+str(self.body)
 
     @property
     def user_agent(self):

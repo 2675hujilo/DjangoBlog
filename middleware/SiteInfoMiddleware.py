@@ -1,5 +1,5 @@
-from django.utils.deprecation import MiddlewareMixin
 from django.core.cache import cache  # 导入缓存库
+from django.utils.deprecation import MiddlewareMixin
 
 from Blog.models import SiteLink, SiteInfo, SiteMenu, Category
 
@@ -55,10 +55,12 @@ class SiteInfoMiddleware(MiddlewareMixin):
         site_menus = cache.get(cache_menus_key)
         if not site_menus:
             site_menus = SiteMenu.objects.all()
-            root_menus = site_menus.filter(menu_root_id=True, menu_level__in=eval(f"level_{current_level}")).order_by("menu_order")
+            root_menus = site_menus.filter(menu_root_id=True, menu_level__in=eval(f"level_{current_level}")).order_by(
+                "menu_order")
             for root_menu in root_menus:
                 root_menu.children = site_menus.filter(menu_root_id=False, menus__in=[root_menu],
-                                                   menu_level__in=eval(f"level_{current_level}")).order_by("menu_order")
+                                                       menu_level__in=eval(f"level_{current_level}")).order_by(
+                    "menu_order")
             cache.set(cache_menus_key, root_menus, timeout=cache_ttl)
         request.site_menus = site_menus
 

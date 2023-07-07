@@ -12,8 +12,9 @@ from django.http import FileResponse, HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.defaults import page_not_found
-from Blog.tasks import add_post_view
+
 from Blog.models import Post, Comment, User, Category, PostInfo
+from Blog.tasks import add_post_view
 
 
 def login(request):

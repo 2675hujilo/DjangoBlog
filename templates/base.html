@@ -43,13 +43,13 @@
                         <a href="{{ root_menu.url }}" class="nav-link dropdown-toggle" data-toggle="dropdown"
                            role="button"
                            aria-haspopup="true" aria-expanded="false">{{ root_menu.menu_text }}</a>
-                            <div class="dropdown-menu bg-touming">
-                        {% if root_menu.children %}
-                            {% for menu in root_menu.children %}
-                                <a class="dropdown-item" href="{{ menu.url }}">{{ menu.menu_text }}</a>
-                        {% endfor %}
-                        {% endif %}
-                            </div>
+                        <div class="dropdown-menu bg-touming">
+                            {% if root_menu.children %}
+                                {% for menu in root_menu.children %}
+                                    <a class="dropdown-item" href="{{ menu.url }}">{{ menu.menu_text }}</a>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     </li>
                 {% endfor %}
                 {% if request.site_categories %}
